@@ -1,0 +1,29 @@
+{
+  "name": "xueditor",
+  "description": "clone from ueditor 1.4.3.2",
+  "main": "ueditor.js",
+  "authors": [
+    "xhFE"
+  ],
+  "license": "ISC",
+  "keywords": [
+    "ueditor",
+    "xueditor",
+    "xhFE",
+    "xhfe",
+    "f2e",
+    "f2e-server"
+  ],
+  "homepage": "https://github.com/xhFE/XUeditor",
+  "moduleType": [
+    "globals"
+  ],
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
