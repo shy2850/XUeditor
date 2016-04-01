@@ -1,0 +1,42 @@
+{
+  "name": "wfquery",
+  "description": "like jQuery but just for new browser",
+  "main": "amd/wfquery.js",
+  "authors": [
+    "shy2850"
+  ],
+  "license": "ISC",
+  "keywords": [
+    "wfQuery",
+    "jQuery",
+    "f2e-server"
+  ],
+  "homepage": "http://webfuture.cn/wfQuery/index.html",
+  "git": "https://github.com/shy2850/wfQuery.git",
+  "moduleType": [
+    "amd"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "demo",
+    "js",
+    "test",
+    "index.html",
+    "README.md",
+    "f2e-conf.js",
+    "wfQuery.js",
+    "bower_components",
+    "tests"
+  ],
+  "_release": "e8dc09f66e",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "e8dc09f66e918a854f4ddd290cfcd1acb0845c91"
+  },
+  "_source": "git://github.com/shy2850/wfQuery.git",
+  "_target": "*",
+  "_originalSource": "wfquery",
+  "_direct": true
+}
