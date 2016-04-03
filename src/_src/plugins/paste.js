@@ -10,6 +10,7 @@
  * @author zhanyi
  */
 UE.plugins['paste'] = function () {
+
     function getClipboardData(callback) {
         var doc = this.document;
         if (doc.getElementById('baidu_pastebin')) {
@@ -135,6 +136,11 @@ UE.plugins['paste'] = function () {
                 var dirtyNodes = div.querySelectorAll('[_moz_dirty]');
                 for (i = 0; ci = dirtyNodes[i++];) {
                     ci.removeAttribute('_moz_dirty');
+                }
+                var img = div.querySelector('img');
+                if (img && img.src && !img.src.indexOf('data:image/png;base64,')) {
+                    var file = UE.utils.convertBase64Url(img.src);
+                    UE.utils.sendAndInsertFile(file, me);
                 }
             }
             if (!browser.ie) {
