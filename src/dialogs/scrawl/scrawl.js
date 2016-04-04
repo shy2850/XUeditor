@@ -627,9 +627,12 @@ function addMaskLayer(html) {
 }
 //执行确认按钮方法
 function exec(scrawlObj) {
+    var convertBase64Url = UE.utils.convertBase64Url;
+    var sendAndInsertFile = UE.utils.sendAndInsertFile;
     if (scrawlObj.isScrawl) {
         addMaskLayer(lang.scrawlUpLoading);
         var base64 = scrawlObj.getCanvasData();
+        /*
         if (!!base64) {
             var options = {
                 timeout:100000,
@@ -662,6 +665,14 @@ function exec(scrawlObj) {
                 params = utils.serializeParam(editor.queryCommandValue('serverparam')) || '',
                 url = utils.formatUrl(actionUrl + (actionUrl.indexOf('?') == -1 ? '?':'&') + params);
             ajax.request(url, options);
+        }
+        */
+        // 換用截圖上傳接口
+        if (!!base64) {
+            var file = convertBase64Url('base64:,' + base64);
+            sendAndInsertFile(file, editor);
+            removeMaskLayer();
+            dialog.close();
         }
     } else {
         addMaskLayer(lang.noScarwl + "&nbsp;&nbsp;&nbsp;<input type='button' value='" + lang.continueBtn + "'  onclick='removeMaskLayer()'/>");
