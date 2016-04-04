@@ -25,21 +25,8 @@
         case 'uploadvideo':
         /* 上传文件 */
         case 'uploadfile':
-            print(JSON.stringify(f));
-            break;
-
-        /* 列出图片 */
-        case 'listimage':
-            break;
-        /* 列出文件 */
-        case 'listfile':
-            break;
-
-        /* 抓取远程文件 */
-        case 'catchimage':
-            break;
-
         default:
+            print(JSON.stringify(f));
             break;
     }
 %>

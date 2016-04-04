@@ -1513,6 +1513,11 @@
          * ```
          */
         getActionUrl: function(action){
+            var me = this;
+            if (me.getOpt('useCfg1_2')) {
+                return me.options[action] || '';
+            }
+
             var actionName = this.getOpt(action) || action,
                 imageUrl = this.getOpt('imageUrl'),
                 serverUrl = this.getOpt('serverUrl');

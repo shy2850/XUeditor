@@ -24,13 +24,19 @@
     /**
      * 配置项主体。注意，此处所有涉及到路径的配置别遗漏URL变量。
      */
-    window.UEDITOR_CONFIG = {
+    var config = {
 
         //为编辑器实例添加一个路径，这个不能被注释
         UEDITOR_HOME_URL: URL
 
         // 服务器统一请求接口路径
-        , serverUrl: URL + "action.js?uploadUrl=uploads/"
+        // , serverUrl: URL + "action.js?uploadUrl=uploads/"
+
+
+        // 支持1.2.6.1版本服务端配置参数, 开启后serverUrl失效, 所有服务端上传接口配置使用1.2.6.1对应版本
+        , useCfg1_2: true
+        // 1.2.6.1的基本上传配置
+        , imageUrl: URL + "action.js?uploadUrl=uploads/"
 
         //工具栏上的所有的功能按钮和下拉框，可以在new编辑器的实例时选择自己需要的重新定义
         , toolbars: [[
@@ -365,6 +371,15 @@
         //,rgb2Hex:true               //默认产出的数据中的color自动从rgb格式变成16进制格式
     };
 
+    var _config = $include["ueditor.json"];
+
+    for (var _cn in _config) {
+        if (_config.hasOwnProperty(_cn)) {
+            config[_cn] = config[_cn] || _config[_cn];
+        }
+    }
+
+    window.UEDITOR_CONFIG = config;
     function getUEBasePath(docUrl, confUrl) {
 
         return getBasePath(docUrl || self.document.URL || self.location.href, confUrl || getConfigFilePath());

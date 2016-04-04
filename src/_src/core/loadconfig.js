@@ -1,7 +1,12 @@
 (function(){
-
+    var config;
     UE.Editor.prototype.loadServerConfig = function(){
         var me = this;
+        if (me.getOpt('useCfg1_2')) {
+            me.fireEvent('serverConfigLoaded');
+            me._serverConfigLoaded = true;
+            return;
+        }
         setTimeout(function(){
             try{
                 me.options.imageUrl && me.setOpt('serverUrl', me.options.imageUrl.replace(/^(.*[\/]).+([\.].+)$/, '$1controller$2'));
