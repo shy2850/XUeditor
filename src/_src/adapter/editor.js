@@ -429,6 +429,8 @@
 
             var editor = this.editor,
                 container = editor.container.parentNode.parentNode;
+
+            editor.fireEvent('fullscreenset', fullscreen);
             if (this._fullscreen != fullscreen) {
                 this._fullscreen = fullscreen;
                 this.editor.fireEvent('beforefullscreenchange', fullscreen);
