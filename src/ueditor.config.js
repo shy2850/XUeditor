@@ -114,7 +114,7 @@
         //,enablePasteUpload: true
 
         //启用图片拉伸缩放
-        //,imageScaleEnabled: true
+        ,imageScaleEnabled: !true
 
         //,fullscreen : false //是否开启初始化时即全屏，默认关闭
 

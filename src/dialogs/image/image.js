@@ -176,7 +176,7 @@
             domUtils.on($G("border"), 'keyup', updatePreview);
             domUtils.on($G("title"), 'keyup', updatePreview);
 
-            domUtils.on($G("width"), 'keyup', function(){
+            domUtils.on($G("width"), 'keyup change', function(){
                 updatePreview();
                 if(locker.checked) {
                     var proportion =locker.getAttribute('data-proportion');
@@ -185,7 +185,7 @@
                     _this.updateLocker();
                 }
             });
-            domUtils.on($G("height"), 'keyup', function(){
+            domUtils.on($G("height"), 'keyup change', function(){
                 updatePreview();
                 if(locker.checked) {
                     var proportion =locker.getAttribute('data-proportion');
