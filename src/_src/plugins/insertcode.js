@@ -236,7 +236,6 @@ UE.plugins['insertcode'] = function() {
         print:1,
         searchreplace:1,
         fullscreen:1,
-        preview:1,
         insertparagraph:1,
         elementpath:1,
         insertcode:1,
