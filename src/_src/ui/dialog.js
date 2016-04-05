@@ -344,8 +344,9 @@
             if (this._hidden) {
                 this.getDom().style.display = '';
 
-                //要高过编辑器的zindxe
-                this.editor.container.style.zIndex && (this.getDom().style.zIndex = this.editor.container.style.zIndex * 1 + 10);
+                //要高过编辑器的zindex
+                var zIndex = this.editor.getOpt('zIndex');
+                zIndex && (this.getDom().style.zIndex = zIndex * 1 + 10);
                 this._hidden = false;
                 this.fireEvent('show');
                 baidu.editor.ui.uiUtils.getFixedLayer().style.zIndex = this.getDom().style.zIndex - 4;
