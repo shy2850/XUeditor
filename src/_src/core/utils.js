@@ -618,7 +618,14 @@ var utils = UE.utils = {
             var element = doc.createElement(obj.tag);
             delete obj.tag;
             for (var p in obj) {
-                element.setAttribute(p, obj[p]);
+                switch (p) {
+                    case 'href':
+                    case 'src':
+                        element.setAttribute(p, obj[p] + '?v=' + UE.version);
+                        break;
+                    default:
+                        element.setAttribute(p, obj[p]);
+                }
             }
             element.onload = element.onreadystatechange = function () {
                 if (!this.readyState || /loaded|complete/.test(this.readyState)) {
