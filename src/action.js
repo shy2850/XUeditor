@@ -1,6 +1,6 @@
 <%
     var CONFIG = $include["ueditor.json"];
-    var action = request.data['action'];
+    var action = request.data['action'] || 'config';
     var fileItem = request.files;
     var f = {};
     if (fileItem && fileItem.length) {

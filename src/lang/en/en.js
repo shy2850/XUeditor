@@ -74,6 +74,7 @@ UE.I18N['en'] = {
         'loading':"loading...",
         'loadError':"load error",
         'errorLoadConfig': 'Server config not loaded, upload can not work.',
+        'webkitFakePath': 'Safari is not allowed to paste a screenshot.\nuse Chrome/Firefox please, \nor you can save your screenshot first.'
     },
     'simpleupload':{
         'exceedSizeError': 'File Size Exceed',

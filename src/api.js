@@ -82,6 +82,7 @@
       'plugins/simpleupload.js',
       'plugins/serverparam.js',
       'plugins/insertfile.js',
+      'plugins/togglemenubox.js',
       
       'ui/ui.js',
       'ui/uiutils.js',

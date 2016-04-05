@@ -73,7 +73,8 @@ UE.I18N['zh-cn'] = {
         'jsonEncodeError': '服务器返回格式错误',
         'loading':"正在上传...",
         'loadError':"上传错误",
-        'errorLoadConfig': '后端配置项没有正常加载，上传插件不能正常使用！'
+        'errorLoadConfig': '后端配置项没有正常加载，上传插件不能正常使用！',
+        'webkitFakePath': '浏览器由于安全设置，不允许上传剪切板的图片。\n您可以使用其他浏览器如: Chrome/Firefox, \n或将剪切板的图片保存到电脑后通过附件上传。'
     },
     'simpleupload':{
         'exceedSizeError': '文件大小超出限制',
@@ -631,7 +632,7 @@ UE.I18N['zh-cn'] = {
             lang_resave:"转存步骤",
             uploadBtn:{src:"upload.png",alt:"上传"},
             clipboard:{style:"background: url(copy.png) -153px -1px no-repeat;"},
-            lang_step:"1、点击顶部复制按钮，将地址复制到剪贴板；2、点击添加照片按钮，在弹出的对话框中使用Ctrl+V粘贴地址；3、点击打开后选择图片上传流程。"
+            lang_step:"1、点击顶部复制按钮，将地址复制到剪贴板；2、点击添加照片按钮，在弹出的对话框(MAC下面使用Ctrl+shift+G打开)中使用Ctrl+V粘贴地址；3、点击打开后选择图片上传流程。"
         },
         'fileType':"图片",
         'flashError':"FLASH初始化失败，请检查FLASH插件是否正确安装！",
