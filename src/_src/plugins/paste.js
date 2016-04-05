@@ -181,6 +181,11 @@ UE.plugins['paste'] = function () {
             if(!html.html){
                 return;
             }
+            // Safari浏览器下面无法粘贴截图
+            else if (html.html && html.html.match(/webkit-fake-url:/)) {
+                alert(me.getLang('autoupload.webkitFakePath'));
+                return;
+            }
             root = UE.htmlparser(html.html,true);
             //如果开启了纯文本模式
             if (me.queryCommandState('pasteplain') === 1) {
