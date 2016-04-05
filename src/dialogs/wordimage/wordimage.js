@@ -62,7 +62,7 @@ function addUploadListener() {
 		this.style.display = "none";
 	};
 }
-
+var isMac = window.navigator.userAgent.indexOf('Mac OS X') !== -1;
 function showLocalPath(id) {
     //单张编辑
     var img = editor.selection.getRange().getClosedNode();
@@ -77,7 +77,7 @@ function showLocalPath(id) {
         separater = leftSlashIndex > rightSlashIndex ? "/":"\\" ;
 
 	path = path.substring(0, path.lastIndexOf(separater)+1);
-	g(id).value = path;
+	g(id).value = isMac ? path.match(/file:\/+[^\/]+(.*?)$/)[1] : path;
 }
 
 function createFlashUploader(opt, callbacks) {
