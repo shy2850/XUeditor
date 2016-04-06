@@ -29,4 +29,10 @@
             print(JSON.stringify(f));
             break;
     }
+    return function () {
+        response.writeHead(200, {
+            "Content-Type": "application/json"
+        });
+        response.end(__p);
+    };
 %>
