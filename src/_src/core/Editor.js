@@ -29,17 +29,13 @@
      * @param { UE.Editor } editor 编辑器事例
      */
     function setValue(form, editor) {
-        var textarea;
-        if (editor.options.textarea) {
-            if (utils.isString(editor.options.textarea)) {
-                for (var i = 0, ti, tis = domUtils.getElementsByTagName(form, 'textarea'); ti = tis[i++];) {
-                    if (ti.id == 'ueditor_textarea_' + editor.options.textarea) {
-                        textarea = ti;
-                        break;
-                    }
+        var textarea = editor.textarea;
+        if (utils.isString(editor.options.textarea)) {
+            for (var i = 0, ti, tis = domUtils.getElementsByTagName(form, 'textarea'); ti = tis[i++];) {
+                if (ti.id == 'ueditor_textarea_' + editor.options.textarea) {
+                    textarea = ti;
+                    break;
                 }
-            } else {
-                textarea = editor.textarea;
             }
         }
         if (!textarea) {
