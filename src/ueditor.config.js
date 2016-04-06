@@ -380,7 +380,7 @@
         //,rgb2Hex:true               //默认产出的数据中的color自动从rgb格式变成16进制格式
     };
 
-    var _config = $include["ueditor.json"];
+    var _config = @import "ueditor.json";
 
     for (var _cn in _config) {
         if (_config.hasOwnProperty(_cn)) {

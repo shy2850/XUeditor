@@ -1,5 +1,5 @@
 <%
-    var CONFIG = $include["ueditor.json"];
+    var CONFIG = @import "ueditor.json";
     var action = request.data['action'] || 'config';
     var fileItem = request.files;
     var f = {};
