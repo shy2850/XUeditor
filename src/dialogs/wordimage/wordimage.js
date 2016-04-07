@@ -77,7 +77,8 @@ function showLocalPath(id) {
         separater = leftSlashIndex > rightSlashIndex ? "/":"\\" ;
 
 	path = path.substring(0, path.lastIndexOf(separater)+1);
-	g(id).value = isMac ? path.match(/file:\/+[^\/]+(.*?)$/)[1] : path;
+	var $path = isMac ? path.match(/file:\/+[^\/]+(.*?)$/)[1] : path;
+    g(id).value = decodeURIComponent($path);
 }
 
 function createFlashUploader(opt, callbacks) {
