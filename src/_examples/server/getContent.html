@@ -9,3 +9,11 @@
 <%=request.post.editor%>
 </body>
 </html>
+<%
+return function () {
+    response.writeHead(200, {
+        'Content-Type': 'text/html'
+    });
+    response.end(__p);
+}
+%>
