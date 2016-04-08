@@ -756,7 +756,9 @@
             title:editor.options.labelMap['autotypeset'] || editor.getLang("labelMap.autotypeset") || '',
             className:'edui-for-autotypeset',
             onbuttonclick:function () {
-                editor.execCommand('autotypeset')
+                editor.execCommand('autotypeset');
+                // ISSUE: https://github.com/fex-team/ueditor/issues/2685
+                editor.focus();
             }
         });
         editorui.buttons['autotypeset'] = ui;
