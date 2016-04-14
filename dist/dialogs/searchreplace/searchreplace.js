@@ -1,1 +1,170 @@
-function clickHandler(e,t,a){for(var r=0,c=e.length;c>r;r++)e[r].className="";a.className="focus";for(var n=a.getAttribute("tabSrc"),s=0,i=t.length;i>s;s++){var o=t[s],l=o.getAttribute("id");l!=n?o.style.zIndex=1:o.style.zIndex=200}}function switchTab(e){for(var t=$G(e).children,a=t[0].children,r=t[1].children,c=0,n=a.length;n>c;c++){var s=a[c];"focus"===s.className&&clickHandler(a,r,s),s.onclick=function(){clickHandler(a,r,this)}}}function getMatchCase(e){return!!$G(e).checked}editor.firstForSR=0,editor.currentRangeForSR=null,$G("searchtab").onmousedown=function(){$G("search-msg").innerHTML="",$G("replace-msg").innerHTML=""},$G("nextFindBtn").onclick=function(e,t,a){var r,c=$G("findtxt").value;if(!c)return!1;if(r={searchStr:c,dir:1,casesensitive:getMatchCase("matchCase")},!frCommond(r)){var n=editor.selection.getRange().createBookmark();$G("search-msg").innerHTML=lang.getEnd,editor.selection.getRange().moveToBookmark(n).select()}},$G("nextReplaceBtn").onclick=function(e,t,a){var r,c=$G("findtxt1").value;return c?(r={searchStr:c,dir:1,casesensitive:getMatchCase("matchCase1")},void frCommond(r)):!1},$G("preFindBtn").onclick=function(e,t,a){var r,c=$G("findtxt").value;return c?(r={searchStr:c,dir:-1,casesensitive:getMatchCase("matchCase")},void(frCommond(r)||($G("search-msg").innerHTML=lang.getStart))):!1},$G("preReplaceBtn").onclick=function(e,t,a){var r,c=$G("findtxt1").value;return c?(r={searchStr:c,dir:-1,casesensitive:getMatchCase("matchCase1")},void frCommond(r)):!1},$G("repalceBtn").onclick=function(){editor.trigger("clearLastSearchResult");var e,t=$G("findtxt1").value.replace(/^\s|\s$/g,""),a=$G("replacetxt").value.replace(/^\s|\s$/g,"");return t?t==a||!getMatchCase("matchCase1")&&t.toLowerCase()==a.toLowerCase()?!1:(e={searchStr:t,dir:1,casesensitive:getMatchCase("matchCase1"),replaceStr:a},void frCommond(e)):!1},$G("repalceAllBtn").onclick=function(){var e,t=$G("findtxt1").value.replace(/^\s|\s$/g,""),a=$G("replacetxt").value.replace(/^\s|\s$/g,"");if(!t)return!1;if(t==a||!getMatchCase("matchCase1")&&t.toLowerCase()==a.toLowerCase())return!1;e={searchStr:t,casesensitive:getMatchCase("matchCase1"),replaceStr:a,all:!0};var r=frCommond(e);r&&($G("replace-msg").innerHTML=lang.countMsg.replace("{#count}",r))};var frCommond=function(e){return editor.execCommand("searchreplace",e)};switchTab("searchtab"),dialog.onclose=function(){editor.trigger("clearLastSearchResult")};
+/**
+ * Created with JetBrains PhpStorm.
+ * User: xuheng
+ * Date: 12-9-26
+ * Time: 下午12:29
+ * To change this template use File | Settings | File Templates.
+ */
+
+//清空上次查选的痕迹
+editor.firstForSR = 0;
+editor.currentRangeForSR = null;
+//给tab注册切换事件
+/**
+ * tab点击处理事件
+ * @param tabHeads
+ * @param tabBodys
+ * @param obj
+ */
+function clickHandler( tabHeads,tabBodys,obj ) {
+    //head样式更改
+    for ( var k = 0, len = tabHeads.length; k < len; k++ ) {
+        tabHeads[k].className = "";
+    }
+    obj.className = "focus";
+    //body显隐
+    var tabSrc = obj.getAttribute( "tabSrc" );
+    for ( var j = 0, length = tabBodys.length; j < length; j++ ) {
+        var body = tabBodys[j],
+            id = body.getAttribute( "id" );
+        if ( id != tabSrc ) {
+            body.style.zIndex = 1;
+        } else {
+            body.style.zIndex = 200;
+        }
+    }
+
+}
+
+/**
+ * TAB切换
+ * @param tabParentId  tab的父节点ID或者对象本身
+ */
+function switchTab( tabParentId ) {
+    var tabElements = $G( tabParentId ).children,
+        tabHeads = tabElements[0].children,
+        tabBodys = tabElements[1].children;
+
+    for ( var i = 0, length = tabHeads.length; i < length; i++ ) {
+        var head = tabHeads[i];
+        if ( head.className === "focus" )clickHandler(tabHeads,tabBodys, head );
+        head.onclick = function () {
+            clickHandler(tabHeads,tabBodys,this);
+        }
+    }
+}
+$G('searchtab').onmousedown = function(){
+    $G('search-msg').innerHTML = '';
+    $G('replace-msg').innerHTML = ''
+}
+//是否区分大小写
+function getMatchCase(id) {
+    return $G(id).checked ? true : false;
+}
+//查找
+$G("nextFindBtn").onclick = function (txt, dir, mcase) {
+    var findtxt = $G("findtxt").value, obj;
+    if (!findtxt) {
+        return false;
+    }
+    obj = {
+        searchStr:findtxt,
+        dir:1,
+        casesensitive:getMatchCase("matchCase")
+    };
+    if (!frCommond(obj)) {
+        var bk = editor.selection.getRange().createBookmark();
+        $G('search-msg').innerHTML = lang.getEnd;
+        editor.selection.getRange().moveToBookmark(bk).select();
+
+
+    }
+};
+$G("nextReplaceBtn").onclick = function (txt, dir, mcase) {
+    var findtxt = $G("findtxt1").value, obj;
+    if (!findtxt) {
+        return false;
+    }
+    obj = {
+        searchStr:findtxt,
+        dir:1,
+        casesensitive:getMatchCase("matchCase1")
+    };
+    frCommond(obj);
+};
+$G("preFindBtn").onclick = function (txt, dir, mcase) {
+    var findtxt = $G("findtxt").value, obj;
+    if (!findtxt) {
+        return false;
+    }
+    obj = {
+        searchStr:findtxt,
+        dir:-1,
+        casesensitive:getMatchCase("matchCase")
+    };
+    if (!frCommond(obj)) {
+        $G('search-msg').innerHTML = lang.getStart;
+    }
+};
+$G("preReplaceBtn").onclick = function (txt, dir, mcase) {
+    var findtxt = $G("findtxt1").value, obj;
+    if (!findtxt) {
+        return false;
+    }
+    obj = {
+        searchStr:findtxt,
+        dir:-1,
+        casesensitive:getMatchCase("matchCase1")
+    };
+    frCommond(obj);
+};
+//替换
+$G("repalceBtn").onclick = function () {
+    editor.trigger('clearLastSearchResult');
+    var findtxt = $G("findtxt1").value.replace(/^\s|\s$/g, ""), obj,
+        replacetxt = $G("replacetxt").value.replace(/^\s|\s$/g, "");
+    if (!findtxt) {
+        return false;
+    }
+    if (findtxt == replacetxt || (!getMatchCase("matchCase1") && findtxt.toLowerCase() == replacetxt.toLowerCase())) {
+        return false;
+    }
+    obj = {
+        searchStr:findtxt,
+        dir:1,
+        casesensitive:getMatchCase("matchCase1"),
+        replaceStr:replacetxt
+    };
+    frCommond(obj);
+};
+//全部替换
+$G("repalceAllBtn").onclick = function () {
+    var findtxt = $G("findtxt1").value.replace(/^\s|\s$/g, ""), obj,
+        replacetxt = $G("replacetxt").value.replace(/^\s|\s$/g, "");
+    if (!findtxt) {
+        return false;
+    }
+    if (findtxt == replacetxt || (!getMatchCase("matchCase1") && findtxt.toLowerCase() == replacetxt.toLowerCase())) {
+        return false;
+    }
+    obj = {
+        searchStr:findtxt,
+        casesensitive:getMatchCase("matchCase1"),
+        replaceStr:replacetxt,
+        all:true
+    };
+    var num = frCommond(obj);
+    if (num) {
+        $G('replace-msg').innerHTML = lang.countMsg.replace("{#count}", num);
+    }
+};
+//执行
+var frCommond = function (obj) {
+    return editor.execCommand("searchreplace", obj);
+};
+switchTab("searchtab");
+
+
+dialog.onclose = function(){
+    editor.trigger('clearLastSearchResult')
+};

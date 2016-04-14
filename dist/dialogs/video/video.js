@@ -1,1 +1,791 @@
-!function(){function e(){for(var e=$G("tabHeads").children,t=0;t<e.length;t++)domUtils.on(e[t],"click",function(t){var a,i,o=t.target||t.srcElement;for(a=0;a<e.length;a++)i=e[a].getAttribute("data-content-id"),e[a]==o?(domUtils.addClass(e[a],"focus"),domUtils.addClass($G(i),"focus")):(domUtils.removeClasses(e[a],"focus"),domUtils.removeClasses($G(i),"focus"))})}function t(){u(["videoFloat","upload_alignment"]),p($G("videoUrl")),a(),function(){var e,t=editor.selection.getRange().getClosedNode();if(t&&t.className){var a="edui-faked-video"==t.className,o=-1!=t.className.indexOf("edui-upload-video");if(a||o){$G("videoUrl").value=e=t.getAttribute("_url"),$G("videoWidth").value=t.width,$G("videoHeight").value=t.height;var r=domUtils.getComputedStyle(t,"float"),n=domUtils.getComputedStyle(t.parentNode,"text-align");i("center"===n?"center":r)}o&&(b=!0)}f(e)}()}function a(){dialog.onok=function(){$G("preview").innerHTML="";var e=n("tabHeads","tabSrc");switch(e){case"video":return o();case"videoSearch":return r("searchList");case"upload":return v()}},dialog.oncancel=function(){$G("preview").innerHTML=""}}function i(e){for(var t,a=$G("videoFloat").children,i=0;t=a[i++];)t.getAttribute("name")==e?"focus"!=t.className&&(t.className="focus"):"focus"==t.className&&(t.className="")}function o(){var e=$G("videoWidth"),t=$G("videoHeight"),a=$G("videoUrl").value,i=n("videoFloat","name");return a&&l([e,t])?void editor.execCommand("insertvideo",{url:s(a),width:e.value,height:t.value,align:i},b?"upload":null):!1}function r(e){for(var t,a=domUtils.getElementsByTagName($G(e),"img"),i=[],o=0;t=a[o++];)t.getAttribute("selected")&&i.push({url:t.getAttribute("ue_video_url"),width:420,height:280,align:"none"});editor.execCommand("insertvideo",i)}function n(e,t){for(var a,i,o=$G(e).children,r=0;i=o[r++];)if("focus"==i.className){a=i.getAttribute(t);break}return a}function s(e){return e?e=utils.trim(e).replace(/v\.youku\.com\/v_show\/id_([\w\-=]+)\.html/i,"player.youku.com/player.php/sid/$1/v.swf").replace(/(www\.)?youtube\.com\/watch\?v=([\w\-]+)/i,"www.youtube.com/v/$2").replace(/youtu.be\/(\w+)$/i,"www.youtube.com/v/$1").replace(/v\.ku6\.com\/.+\/([\w\.]+)\.html.*$/i,"player.ku6.com/refer/$1/v.swf").replace(/www\.56\.com\/u\d+\/v_([\w\-]+)\.html/i,"player.56.com/v_$1.swf").replace(/www.56.com\/w\d+\/play_album\-aid\-\d+_vid\-([^.]+)\.html/i,"player.56.com/v_$1.swf").replace(/v\.pps\.tv\/play_([\w]+)\.html.*$/i,"player.pps.tv/player/sid/$1/v.swf").replace(/www\.letv\.com\/ptv\/vplay\/([\d]+)\.html.*$/i,"i7.imgs.letv.com/player/swfPlayer.swf?id=$1&autoplay=0").replace(/www\.tudou\.com\/programs\/view\/([\w\-]+)\/?/i,"www.tudou.com/v/$1").replace(/v\.qq\.com\/cover\/[\w]+\/[\w]+\/([\w]+)\.html/i,"static.video.qq.com/TPout.swf?vid=$1").replace(/v\.qq\.com\/.+[\?\&]vid=([^&]+).*$/i,"static.video.qq.com/TPout.swf?vid=$1").replace(/my\.tv\.sohu\.com\/[\w]+\/[\d]+\/([\d]+)\.shtml.*$/i,"share.vrs.sohu.com/my/v.swf&id=$1"):""}function l(e){for(var t,a=0;t=e[a++];){var i=t.value;if(!d(i)&&i)return alert(lang.numError),t.value="",t.focus(),!1}return!0}function d(e){return/(0|^[1-9]\d*$)/.test(e)}function u(e){for(var t,a=0;t=e[a++];){var i=$G(t),o={none:lang["default"],left:lang.floatLeft,right:lang.floatRight,center:lang.block};for(var r in o){var n=document.createElement("div");n.setAttribute("name",r),"none"==r&&(n.className="focus"),n.style.cssText="background:url(images/"+r+"_focus.jpg);",n.setAttribute("title",o[r]),i.appendChild(n)}c(t)}}function c(e){for(var t,a=$G(e).children,i=0;t=a[i++];)domUtils.on(t,"click",function(){for(var e,t=0;e=a[t++];)e.className="",e.removeAttribute&&e.removeAttribute("class");this.className="focus"})}function p(e){browser.ie?e.onpropertychange=function(){f(this.value)}:e.addEventListener("input",function(){f(this.value)},!1)}function f(e){if(e){var t=s(e);$G("preview").innerHTML='<div class="previewMsg"><span>'+lang.urlError+'</span></div><embed class="previewVideo" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" src="'+t+'" width="420" height="280" wmode="transparent" play="true" loop="false" menu="false" allowscriptaccess="never" allowfullscreen="true" ></embed>'}}function v(){var e=[],t=editor.getOpt("videoUrlPrefix"),a=$G("upload_width").value||420,i=$G("upload_height").value||280,o=n("upload_alignment","name")||"none";for(var r in w){var s=w[r];e.push({url:t+s.url,width:a,height:i,align:o})}var l=h.getQueueCount();return l?($(".info","#queueList").html('<span style="color:red;">'+"还有2个未上传文件".replace(/[\d]/,l)+"</span>"),!1):void editor.execCommand("insertvideo",e,"upload")}function m(){h=new g("queueList")}function g(e){this.$wrap=e.constructor==String?$("#"+e):$(e),this.init()}var h,w=[],b=!1;window.onload=function(){$focus($G("videoUrl")),e(),t(),m()},g.prototype={init:function(){this.fileList=[],this.initContainer(),this.initUploader()},initContainer:function(){this.$queue=this.$wrap.find(".filelist")},initUploader:function(){function e(e){var t=s('<li id="'+e.id+'"><p class="title">'+e.name+'</p><p class="imgWrap"></p><p class="progress"><span></span></p></li>'),a=s('<div class="file-panel"><span class="cancel">'+lang.uploadDelete+'</span><span class="rotateRight">'+lang.uploadTurnRight+'</span><span class="rotateLeft">'+lang.uploadTurnLeft+"</span></div>").appendTo(t),i=t.find("p.progress span"),o=t.find("p.imgWrap"),n=s('<p class="error"></p>').hide().appendTo(t),l=function(e){switch(e){case"exceed_size":text=lang.errorExceedSize;break;case"interrupt":text=lang.errorInterrupt;break;case"http":text=lang.errorHttp;break;case"not_allow_type":text=lang.errorFileType;break;default:text=lang.errorUploadRetry}n.text(text).show()};"invalid"===e.getStatus()?l(e.statusText):(o.text(lang.uploadPreview),-1=="|png|jpg|jpeg|bmp|gif|".indexOf("|"+e.ext.toLowerCase()+"|")?o.empty().addClass("notimage").append('<i class="file-preview file-type-'+e.ext.toLowerCase()+'"></i><span class="file-title">'+e.name+"</span>"):browser.ie&&browser.version<=7?o.text(lang.uploadNoPreview):r.makeThumb(e,function(e,t){if(e||!t||/^data:/.test(t)&&browser.ie&&browser.version<=7)o.text(lang.uploadNoPreview);else{var a=s('<img src="'+t+'">');o.empty().append(a),a.on("error",function(){o.text(lang.uploadNoPreview)})}},y,$),x[e.id]=[e.size,0],e.rotation=0,e.ext&&-1!=N.indexOf(e.ext.toLowerCase())||(l("not_allow_type"),r.removeFile(e))),e.on("statuschange",function(o,r){"progress"===r?i.hide().width(0):"queued"===r&&(t.off("mouseenter mouseleave"),a.remove()),"error"===o||"invalid"===o?(l(e.statusText),x[e.id][1]=1):"interrupt"===o?l("interrupt"):"queued"===o?x[e.id][1]=0:"progress"===o&&(n.hide(),i.css("display","block")),t.removeClass("state-"+r).addClass("state-"+o)}),t.on("mouseenter",function(){a.stop().animate({height:30})}),t.on("mouseleave",function(){a.stop().animate({height:0})}),a.on("click","span",function(){var t,a=s(this).index();switch(a){case 0:return void r.removeFile(e);case 1:e.rotation+=90;break;case 2:e.rotation-=90}k?(t="rotate("+e.rotation+"deg)",o.css({"-webkit-transform":t,"-mos-transform":t,"-o-transform":t,transform:t})):o.css("filter","progid:DXImageTransform.Microsoft.BasicImage(rotation="+~~(e.rotation/90%4+4)%4+")")}),t.insertBefore(f)}function t(e){var t=s("#"+e.id);delete x[e.id],a(),t.off().find(".file-panel").off().end().remove()}function a(){var e,t=0,a=0,i=m.children();s.each(x,function(e,i){a+=i[0],t+=i[0]*i[1]}),e=a?t/a:0,i.eq(0).text(Math.round(100*e)+"%"),i.eq(1).css("width",Math.round(100*e)+"%"),o()}function i(e,t){if(e!=C){var a=r.getStats();switch(p.removeClass("state-"+C),p.addClass("state-"+e),e){case"pedding":d.addClass("element-invisible"),u.addClass("element-invisible"),v.removeClass("element-invisible"),m.hide(),c.hide(),r.refresh();break;case"ready":v.addClass("element-invisible"),d.removeClass("element-invisible"),u.removeClass("element-invisible"),m.hide(),c.show(),p.text(lang.uploadStart),r.refresh();break;case"uploading":m.show(),c.hide(),p.text(lang.uploadPause);break;case"paused":m.show(),c.hide(),p.text(lang.uploadContinue);break;case"confirm":if(m.show(),c.hide(),p.text(lang.uploadStart),a=r.getStats(),a.successNum&&!a.uploadFailNum)return void i("finish");break;case"finish":m.hide(),c.show(),a.uploadFailNum?p.text(lang.uploadRetry):p.text(lang.uploadStart)}C=e,o()}n.getQueueCount()?p.removeClass("disabled"):p.addClass("disabled")}function o(){var e,t="";"ready"===C?t=lang.updateStatusReady.replace("_",g).replace("_KB",WebUploader.formatSize(h)):"confirm"===C?(e=r.getStats(),e.uploadFailNum&&(t=lang.updateStatusConfirm.replace("_",e.successNum).replace("_",e.successNum))):(e=r.getStats(),t=lang.updateStatusFinish.replace("_",g).replace("_KB",WebUploader.formatSize(h)).replace("_",e.successNum),e.uploadFailNum&&(t+=lang.updateStatusError.replace("_",e.uploadFailNum))),c.html(t)}var r,n=this,s=jQuery,l=n.$wrap,d=l.find(".filelist"),u=l.find(".statusBar"),c=u.find(".info"),p=l.find(".uploadBtn"),f=(l.find(".filePickerBtn"),l.find(".filePickerBlock")),v=l.find(".placeholder"),m=u.find(".progress").hide(),g=0,h=0,b=window.devicePixelRatio||1,y=113*b,$=113*b,C="",x={},k=function(){var e=document.createElement("p").style,t="transition"in e||"WebkitTransition"in e||"MozTransition"in e||"msTransition"in e||"OTransition"in e;return e=null,t}(),_=editor.getActionUrl(editor.getOpt("videoActionName")),S=editor.getOpt("videoMaxSize"),N=(editor.getOpt("videoAllowFiles")||[]).join("").replace(/\./g,",").replace(/^[,]/,"");return WebUploader.Uploader.support()?editor.getOpt("videoActionName")?(r=n.uploader=WebUploader.create({pick:{id:"#filePickerReady",label:lang.uploadSelectFile},swf:"../../third-party/webuploader/Uploader.swf",server:_,fileVal:editor.getOpt("videoFieldName"),duplicate:!0,fileSingleSizeLimit:S,compress:!1}),r.addButton({id:"#filePickerBlock"}),r.addButton({id:"#filePickerBtn",label:lang.uploadAddFile}),i("pedding"),r.on("fileQueued",function(t){g++,h+=t.size,1===g&&(v.addClass("element-invisible"),u.show()),e(t)}),r.on("fileDequeued",function(e){g--,h-=e.size,t(e),a()}),r.on("filesQueued",function(e){r.isInProgress()||"pedding"!=C&&"finish"!=C&&"confirm"!=C&&"ready"!=C||i("ready"),a()}),r.on("all",function(e,t){switch(e){case"uploadFinished":i("confirm",t);break;case"startUpload":var a=utils.serializeParam(editor.queryCommandValue("serverparam"))||"",o=utils.formatUrl(_+(-1==_.indexOf("?")?"?":"&")+"encode=utf-8&"+a);r.option("server",o),i("uploading",t);break;case"stopUpload":i("paused",t)}}),r.on("uploadBeforeSend",function(e,t,a){-1!=_.toLowerCase().indexOf("jsp")&&(a.X_Requested_With="XMLHttpRequest")}),r.on("uploadProgress",function(e,t){var i=s("#"+e.id),o=i.find(".progress span");o.css("width",100*t+"%"),x[e.id][1]=t,a()}),r.on("uploadSuccess",function(e,t){var a=s("#"+e.id);try{var i=t._raw||t,o=utils.str2json(i);"SUCCESS"==o.state?(w.push({url:o.url,type:o.type,original:o.original}),a.append('<span class="success"></span>')):a.find(".error").text(o.state).show()}catch(r){a.find(".error").text(lang.errorServerUpload).show()}}),r.on("uploadError",function(e,t){}),r.on("error",function(t,a){"Q_TYPE_DENIED"!=t&&"F_EXCEED_SIZE"!=t||e(a)}),r.on("uploadComplete",function(e,t){}),p.on("click",function(){return s(this).hasClass("disabled")?!1:void("ready"===C?r.upload():"paused"===C?r.upload():"uploading"===C&&r.stop())}),p.addClass("state-"+C),void a()):void s("#filePickerReady").after(s("<div>").html(lang.errorLoadConfig)).hide():void s("#filePickerReady").after(s("<div>").html(lang.errorNotSupport)).hide()},getQueueCount:function(){var e,t,a,i=0,o=this.uploader.getFiles();for(t=0;e=o[t++];)a=e.getStatus(),"queued"!=a&&"uploading"!=a&&"progress"!=a||i++;return i},refresh:function(){this.uploader.refresh()}}}();
+/**
+ * Created by JetBrains PhpStorm.
+ * User: taoqili
+ * Date: 12-2-20
+ * Time: 上午11:19
+ * To change this template use File | Settings | File Templates.
+ */
+
+(function(){
+
+    var video = {},
+        uploadVideoList = [],
+        isModifyUploadVideo = false,
+        uploadFile;
+
+    window.onload = function(){
+        $focus($G("videoUrl"));
+        initTabs();
+        initVideo();
+        initUpload();
+    };
+
+    /* 初始化tab标签 */
+    function initTabs(){
+        var tabs = $G('tabHeads').children;
+        for (var i = 0; i < tabs.length; i++) {
+            domUtils.on(tabs[i], "click", function (e) {
+                var j, bodyId, target = e.target || e.srcElement;
+                for (j = 0; j < tabs.length; j++) {
+                    bodyId = tabs[j].getAttribute('data-content-id');
+                    if(tabs[j] == target){
+                        domUtils.addClass(tabs[j], 'focus');
+                        domUtils.addClass($G(bodyId), 'focus');
+                    }else {
+                        domUtils.removeClasses(tabs[j], 'focus');
+                        domUtils.removeClasses($G(bodyId), 'focus');
+                    }
+                }
+            });
+        }
+    }
+
+    function initVideo(){
+        createAlignButton( ["videoFloat", "upload_alignment"] );
+        addUrlChangeListener($G("videoUrl"));
+        addOkListener();
+
+        //编辑视频时初始化相关信息
+        (function(){
+            var img = editor.selection.getRange().getClosedNode(),url;
+            if(img && img.className){
+                var hasFakedClass = (img.className == "edui-faked-video"),
+                    hasUploadClass = img.className.indexOf("edui-upload-video")!=-1;
+                if(hasFakedClass || hasUploadClass) {
+                    $G("videoUrl").value = url = img.getAttribute("_url");
+                    $G("videoWidth").value = img.width;
+                    $G("videoHeight").value = img.height;
+                    var align = domUtils.getComputedStyle(img,"float"),
+                        parentAlign = domUtils.getComputedStyle(img.parentNode,"text-align");
+                    updateAlignButton(parentAlign==="center"?"center":align);
+                }
+                if(hasUploadClass) {
+                    isModifyUploadVideo = true;
+                }
+            }
+            createPreviewVideo(url);
+        })();
+    }
+
+    /**
+     * 监听确认和取消两个按钮事件，用户执行插入或者清空正在播放的视频实例操作
+     */
+    function addOkListener(){
+        dialog.onok = function(){
+            $G("preview").innerHTML = "";
+            var currentTab =  findFocus("tabHeads","tabSrc");
+            switch(currentTab){
+                case "video":
+                    return insertSingle();
+                    break;
+                case "videoSearch":
+                    return insertSearch("searchList");
+                    break;
+                case "upload":
+                    return insertUpload();
+                    break;
+            }
+        };
+        dialog.oncancel = function(){
+            $G("preview").innerHTML = "";
+        };
+    }
+
+    /**
+     * 依据传入的align值更新按钮信息
+     * @param align
+     */
+    function updateAlignButton( align ) {
+        var aligns = $G( "videoFloat" ).children;
+        for ( var i = 0, ci; ci = aligns[i++]; ) {
+            if ( ci.getAttribute( "name" ) == align ) {
+                if ( ci.className !="focus" ) {
+                    ci.className = "focus";
+                }
+            } else {
+                if ( ci.className =="focus" ) {
+                    ci.className = "";
+                }
+            }
+        }
+    }
+
+    /**
+     * 将单个视频信息插入编辑器中
+     */
+    function insertSingle(){
+        var width = $G("videoWidth"),
+            height = $G("videoHeight"),
+            url=$G('videoUrl').value,
+            align = findFocus("videoFloat","name");
+        if(!url) return false;
+        if ( !checkNum( [width, height] ) ) return false;
+        editor.execCommand('insertvideo', {
+            url: convert_url(url),
+            width: width.value,
+            height: height.value,
+            align: align
+        }, isModifyUploadVideo ? 'upload':null);
+    }
+
+    /**
+     * 将元素id下的所有代表视频的图片插入编辑器中
+     * @param id
+     */
+    function insertSearch(id){
+        var imgs = domUtils.getElementsByTagName($G(id),"img"),
+            videoObjs=[];
+        for(var i=0,img; img=imgs[i++];){
+            if(img.getAttribute("selected")){
+                videoObjs.push({
+                    url:img.getAttribute("ue_video_url"),
+                    width:420,
+                    height:280,
+                    align:"none"
+                });
+            }
+        }
+        editor.execCommand('insertvideo',videoObjs);
+    }
+
+    /**
+     * 找到id下具有focus类的节点并返回该节点下的某个属性
+     * @param id
+     * @param returnProperty
+     */
+    function findFocus( id, returnProperty ) {
+        var tabs = $G( id ).children,
+                property;
+        for ( var i = 0, ci; ci = tabs[i++]; ) {
+            if ( ci.className=="focus" ) {
+                property = ci.getAttribute( returnProperty );
+                break;
+            }
+        }
+        return property;
+    }
+    function convert_url(url){
+        if ( !url ) return '';
+        url = utils.trim(url)
+            .replace(/v\.youku\.com\/v_show\/id_([\w\-=]+)\.html/i, 'player.youku.com/player.php/sid/$1/v.swf')
+            .replace(/(www\.)?youtube\.com\/watch\?v=([\w\-]+)/i, "www.youtube.com/v/$2")
+            .replace(/youtu.be\/(\w+)$/i, "www.youtube.com/v/$1")
+            .replace(/v\.ku6\.com\/.+\/([\w\.]+)\.html.*$/i, "player.ku6.com/refer/$1/v.swf")
+            .replace(/www\.56\.com\/u\d+\/v_([\w\-]+)\.html/i, "player.56.com/v_$1.swf")
+            .replace(/www.56.com\/w\d+\/play_album\-aid\-\d+_vid\-([^.]+)\.html/i, "player.56.com/v_$1.swf")
+            .replace(/v\.pps\.tv\/play_([\w]+)\.html.*$/i, "player.pps.tv/player/sid/$1/v.swf")
+            .replace(/www\.letv\.com\/ptv\/vplay\/([\d]+)\.html.*$/i, "i7.imgs.letv.com/player/swfPlayer.swf?id=$1&autoplay=0")
+            .replace(/www\.tudou\.com\/programs\/view\/([\w\-]+)\/?/i, "www.tudou.com/v/$1")
+            .replace(/v\.qq\.com\/cover\/[\w]+\/[\w]+\/([\w]+)\.html/i, "static.video.qq.com/TPout.swf?vid=$1")
+            .replace(/v\.qq\.com\/.+[\?\&]vid=([^&]+).*$/i, "static.video.qq.com/TPout.swf?vid=$1")
+            .replace(/my\.tv\.sohu\.com\/[\w]+\/[\d]+\/([\d]+)\.shtml.*$/i, "share.vrs.sohu.com/my/v.swf&id=$1");
+
+        return url;
+    }
+
+    /**
+      * 检测传入的所有input框中输入的长宽是否是正数
+      * @param nodes input框集合，
+      */
+     function checkNum( nodes ) {
+         for ( var i = 0, ci; ci = nodes[i++]; ) {
+             var value = ci.value;
+             if ( !isNumber( value ) && value) {
+                 alert( lang.numError );
+                 ci.value = "";
+                 ci.focus();
+                 return false;
+             }
+         }
+         return true;
+     }
+
+    /**
+     * 数字判断
+     * @param value
+     */
+    function isNumber( value ) {
+        return /(0|^[1-9]\d*$)/.test( value );
+    }
+
+    /**
+      * 创建图片浮动选择按钮
+      * @param ids
+      */
+     function createAlignButton( ids ) {
+         for ( var i = 0, ci; ci = ids[i++]; ) {
+             var floatContainer = $G( ci ),
+                     nameMaps = {"none":lang['default'], "left":lang.floatLeft, "right":lang.floatRight, "center":lang.block};
+             for ( var j in nameMaps ) {
+                 var div = document.createElement( "div" );
+                 div.setAttribute( "name", j );
+                 if ( j == "none" ) div.className="focus";
+                 div.style.cssText = "background:url(images/" + j + "_focus.jpg);";
+                 div.setAttribute( "title", nameMaps[j] );
+                 floatContainer.appendChild( div );
+             }
+             switchSelect( ci );
+         }
+     }
+
+    /**
+     * 选择切换
+     * @param selectParentId
+     */
+    function switchSelect( selectParentId ) {
+        var selects = $G( selectParentId ).children;
+        for ( var i = 0, ci; ci = selects[i++]; ) {
+            domUtils.on( ci, "click", function () {
+                for ( var j = 0, cj; cj = selects[j++]; ) {
+                    cj.className = "";
+                    cj.removeAttribute && cj.removeAttribute( "class" );
+                }
+                this.className = "focus";
+            } )
+        }
+    }
+
+    /**
+     * 监听url改变事件
+     * @param url
+     */
+    function addUrlChangeListener(url){
+        if (browser.ie) {
+            url.onpropertychange = function () {
+                createPreviewVideo( this.value );
+            }
+        } else {
+            url.addEventListener( "input", function () {
+                createPreviewVideo( this.value );
+            }, false );
+        }
+    }
+
+    /**
+     * 根据url生成视频预览
+     * @param url
+     */
+    function createPreviewVideo(url){
+        if ( !url )return;
+
+        var conUrl = convert_url(url);
+
+        $G("preview").innerHTML = '<div class="previewMsg"><span>'+lang.urlError+'</span></div>'+
+        '<embed class="previewVideo" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer"' +
+            ' src="' + conUrl + '"' +
+            ' width="' + 420  + '"' +
+            ' height="' + 280  + '"' +
+            ' wmode="transparent" play="true" loop="false" menu="false" allowscriptaccess="never" allowfullscreen="true" >' +
+        '</embed>';
+    }
+
+
+    /* 插入上传视频 */
+    function insertUpload(){
+        var videoObjs=[],
+            uploadDir = editor.getOpt('videoUrlPrefix'),
+            width = $G('upload_width').value || 420,
+            height = $G('upload_height').value || 280,
+            align = findFocus("upload_alignment","name") || 'none';
+        for(var key in uploadVideoList) {
+            var file = uploadVideoList[key];
+            videoObjs.push({
+                url: uploadDir + file.url,
+                width:width,
+                height:height,
+                align:align
+            });
+        }
+
+        var count = uploadFile.getQueueCount();
+        if (count) {
+            $('.info', '#queueList').html('<span style="color:red;">' + '还有2个未上传文件'.replace(/[\d]/, count) + '</span>');
+            return false;
+        } else {
+            editor.execCommand('insertvideo', videoObjs, 'upload');
+        }
+    }
+
+    /*初始化上传标签*/
+    function initUpload(){
+        uploadFile = new UploadFile('queueList');
+    }
+
+
+    /* 上传附件 */
+    function UploadFile(target) {
+        this.$wrap = target.constructor == String ? $('#' + target) : $(target);
+        this.init();
+    }
+    UploadFile.prototype = {
+        init: function () {
+            this.fileList = [];
+            this.initContainer();
+            this.initUploader();
+        },
+        initContainer: function () {
+            this.$queue = this.$wrap.find('.filelist');
+        },
+        /* 初始化容器 */
+        initUploader: function () {
+            var _this = this,
+                $ = jQuery,    // just in case. Make sure it's not an other libaray.
+                $wrap = _this.$wrap,
+            // 图片容器
+                $queue = $wrap.find('.filelist'),
+            // 状态栏，包括进度和控制按钮
+                $statusBar = $wrap.find('.statusBar'),
+            // 文件总体选择信息。
+                $info = $statusBar.find('.info'),
+            // 上传按钮
+                $upload = $wrap.find('.uploadBtn'),
+            // 上传按钮
+                $filePickerBtn = $wrap.find('.filePickerBtn'),
+            // 上传按钮
+                $filePickerBlock = $wrap.find('.filePickerBlock'),
+            // 没选择文件之前的内容。
+                $placeHolder = $wrap.find('.placeholder'),
+            // 总体进度条
+                $progress = $statusBar.find('.progress').hide(),
+            // 添加的文件数量
+                fileCount = 0,
+            // 添加的文件总大小
+                fileSize = 0,
+            // 优化retina, 在retina下这个值是2
+                ratio = window.devicePixelRatio || 1,
+            // 缩略图大小
+                thumbnailWidth = 113 * ratio,
+                thumbnailHeight = 113 * ratio,
+            // 可能有pedding, ready, uploading, confirm, done.
+                state = '',
+            // 所有文件的进度信息，key为file id
+                percentages = {},
+                supportTransition = (function () {
+                    var s = document.createElement('p').style,
+                        r = 'transition' in s ||
+                            'WebkitTransition' in s ||
+                            'MozTransition' in s ||
+                            'msTransition' in s ||
+                            'OTransition' in s;
+                    s = null;
+                    return r;
+                })(),
+            // WebUploader实例
+                uploader,
+                actionUrl = editor.getActionUrl(editor.getOpt('videoActionName')),
+                fileMaxSize = editor.getOpt('videoMaxSize'),
+                acceptExtensions = (editor.getOpt('videoAllowFiles') || []).join('').replace(/\./g, ',').replace(/^[,]/, '');;
+
+            if (!WebUploader.Uploader.support()) {
+                $('#filePickerReady').after($('<div>').html(lang.errorNotSupport)).hide();
+                return;
+            } else if (!editor.getOpt('videoActionName')) {
+                $('#filePickerReady').after($('<div>').html(lang.errorLoadConfig)).hide();
+                return;
+            }
+
+            uploader = _this.uploader = WebUploader.create({
+                pick: {
+                    id: '#filePickerReady',
+                    label: lang.uploadSelectFile
+                },
+                swf: '../../third-party/webuploader/Uploader.swf',
+                server: actionUrl,
+                fileVal: editor.getOpt('videoFieldName'),
+                duplicate: true,
+                fileSingleSizeLimit: fileMaxSize,
+                compress: false
+            });
+            uploader.addButton({
+                id: '#filePickerBlock'
+            });
+            uploader.addButton({
+                id: '#filePickerBtn',
+                label: lang.uploadAddFile
+            });
+
+            setState('pedding');
+
+            // 当有文件添加进来时执行，负责view的创建
+            function addFile(file) {
+                var $li = $('<li id="' + file.id + '">' +
+                        '<p class="title">' + file.name + '</p>' +
+                        '<p class="imgWrap"></p>' +
+                        '<p class="progress"><span></span></p>' +
+                        '</li>'),
+
+                    $btns = $('<div class="file-panel">' +
+                        '<span class="cancel">' + lang.uploadDelete + '</span>' +
+                        '<span class="rotateRight">' + lang.uploadTurnRight + '</span>' +
+                        '<span class="rotateLeft">' + lang.uploadTurnLeft + '</span></div>').appendTo($li),
+                    $prgress = $li.find('p.progress span'),
+                    $wrap = $li.find('p.imgWrap'),
+                    $info = $('<p class="error"></p>').hide().appendTo($li),
+
+                    showError = function (code) {
+                        switch (code) {
+                            case 'exceed_size':
+                                text = lang.errorExceedSize;
+                                break;
+                            case 'interrupt':
+                                text = lang.errorInterrupt;
+                                break;
+                            case 'http':
+                                text = lang.errorHttp;
+                                break;
+                            case 'not_allow_type':
+                                text = lang.errorFileType;
+                                break;
+                            default:
+                                text = lang.errorUploadRetry;
+                                break;
+                        }
+                        $info.text(text).show();
+                    };
+
+                if (file.getStatus() === 'invalid') {
+                    showError(file.statusText);
+                } else {
+                    $wrap.text(lang.uploadPreview);
+                    if ('|png|jpg|jpeg|bmp|gif|'.indexOf('|'+file.ext.toLowerCase()+'|') == -1) {
+                        $wrap.empty().addClass('notimage').append('<i class="file-preview file-type-' + file.ext.toLowerCase() + '"></i>' +
+                            '<span class="file-title">' + file.name + '</span>');
+                    } else {
+                        if (browser.ie && browser.version <= 7) {
+                            $wrap.text(lang.uploadNoPreview);
+                        } else {
+                            uploader.makeThumb(file, function (error, src) {
+                                if (error || !src || (/^data:/.test(src) && browser.ie && browser.version <= 7)) {
+                                    $wrap.text(lang.uploadNoPreview);
+                                } else {
+                                    var $img = $('<img src="' + src + '">');
+                                    $wrap.empty().append($img);
+                                    $img.on('error', function () {
+                                        $wrap.text(lang.uploadNoPreview);
+                                    });
+                                }
+                            }, thumbnailWidth, thumbnailHeight);
+                        }
+                    }
+                    percentages[ file.id ] = [ file.size, 0 ];
+                    file.rotation = 0;
+
+                    /* 检查文件格式 */
+                    if (!file.ext || acceptExtensions.indexOf(file.ext.toLowerCase()) == -1) {
+                        showError('not_allow_type');
+                        uploader.removeFile(file);
+                    }
+                }
+
+                file.on('statuschange', function (cur, prev) {
+                    if (prev === 'progress') {
+                        $prgress.hide().width(0);
+                    } else if (prev === 'queued') {
+                        $li.off('mouseenter mouseleave');
+                        $btns.remove();
+                    }
+                    // 成功
+                    if (cur === 'error' || cur === 'invalid') {
+                        showError(file.statusText);
+                        percentages[ file.id ][ 1 ] = 1;
+                    } else if (cur === 'interrupt') {
+                        showError('interrupt');
+                    } else if (cur === 'queued') {
+                        percentages[ file.id ][ 1 ] = 0;
+                    } else if (cur === 'progress') {
+                        $info.hide();
+                        $prgress.css('display', 'block');
+                    } else if (cur === 'complete') {
+                    }
+
+                    $li.removeClass('state-' + prev).addClass('state-' + cur);
+                });
+
+                $li.on('mouseenter', function () {
+                    $btns.stop().animate({height: 30});
+                });
+                $li.on('mouseleave', function () {
+                    $btns.stop().animate({height: 0});
+                });
+
+                $btns.on('click', 'span', function () {
+                    var index = $(this).index(),
+                        deg;
+
+                    switch (index) {
+                        case 0:
+                            uploader.removeFile(file);
+                            return;
+                        case 1:
+                            file.rotation += 90;
+                            break;
+                        case 2:
+                            file.rotation -= 90;
+                            break;
+                    }
+
+                    if (supportTransition) {
+                        deg = 'rotate(' + file.rotation + 'deg)';
+                        $wrap.css({
+                            '-webkit-transform': deg,
+                            '-mos-transform': deg,
+                            '-o-transform': deg,
+                            'transform': deg
+                        });
+                    } else {
+                        $wrap.css('filter', 'progid:DXImageTransform.Microsoft.BasicImage(rotation=' + (~~((file.rotation / 90) % 4 + 4) % 4) + ')');
+                    }
+
+                });
+
+                $li.insertBefore($filePickerBlock);
+            }
+
+            // 负责view的销毁
+            function removeFile(file) {
+                var $li = $('#' + file.id);
+                delete percentages[ file.id ];
+                updateTotalProgress();
+                $li.off().find('.file-panel').off().end().remove();
+            }
+
+            function updateTotalProgress() {
+                var loaded = 0,
+                    total = 0,
+                    spans = $progress.children(),
+                    percent;
+
+                $.each(percentages, function (k, v) {
+                    total += v[ 0 ];
+                    loaded += v[ 0 ] * v[ 1 ];
+                });
+
+                percent = total ? loaded / total : 0;
+
+                spans.eq(0).text(Math.round(percent * 100) + '%');
+                spans.eq(1).css('width', Math.round(percent * 100) + '%');
+                updateStatus();
+            }
+
+            function setState(val, files) {
+
+                if (val != state) {
+
+                    var stats = uploader.getStats();
+
+                    $upload.removeClass('state-' + state);
+                    $upload.addClass('state-' + val);
+
+                    switch (val) {
+
+                        /* 未选择文件 */
+                        case 'pedding':
+                            $queue.addClass('element-invisible');
+                            $statusBar.addClass('element-invisible');
+                            $placeHolder.removeClass('element-invisible');
+                            $progress.hide(); $info.hide();
+                            uploader.refresh();
+                            break;
+
+                        /* 可以开始上传 */
+                        case 'ready':
+                            $placeHolder.addClass('element-invisible');
+                            $queue.removeClass('element-invisible');
+                            $statusBar.removeClass('element-invisible');
+                            $progress.hide(); $info.show();
+                            $upload.text(lang.uploadStart);
+                            uploader.refresh();
+                            break;
+
+                        /* 上传中 */
+                        case 'uploading':
+                            $progress.show(); $info.hide();
+                            $upload.text(lang.uploadPause);
+                            break;
+
+                        /* 暂停上传 */
+                        case 'paused':
+                            $progress.show(); $info.hide();
+                            $upload.text(lang.uploadContinue);
+                            break;
+
+                        case 'confirm':
+                            $progress.show(); $info.hide();
+                            $upload.text(lang.uploadStart);
+
+                            stats = uploader.getStats();
+                            if (stats.successNum && !stats.uploadFailNum) {
+                                setState('finish');
+                                return;
+                            }
+                            break;
+
+                        case 'finish':
+                            $progress.hide(); $info.show();
+                            if (stats.uploadFailNum) {
+                                $upload.text(lang.uploadRetry);
+                            } else {
+                                $upload.text(lang.uploadStart);
+                            }
+                            break;
+                    }
+
+                    state = val;
+                    updateStatus();
+
+                }
+
+                if (!_this.getQueueCount()) {
+                    $upload.addClass('disabled')
+                } else {
+                    $upload.removeClass('disabled')
+                }
+
+            }
+
+            function updateStatus() {
+                var text = '', stats;
+
+                if (state === 'ready') {
+                    text = lang.updateStatusReady.replace('_', fileCount).replace('_KB', WebUploader.formatSize(fileSize));
+                } else if (state === 'confirm') {
+                    stats = uploader.getStats();
+                    if (stats.uploadFailNum) {
+                        text = lang.updateStatusConfirm.replace('_', stats.successNum).replace('_', stats.successNum);
+                    }
+                } else {
+                    stats = uploader.getStats();
+                    text = lang.updateStatusFinish.replace('_', fileCount).
+                        replace('_KB', WebUploader.formatSize(fileSize)).
+                        replace('_', stats.successNum);
+
+                    if (stats.uploadFailNum) {
+                        text += lang.updateStatusError.replace('_', stats.uploadFailNum);
+                    }
+                }
+
+                $info.html(text);
+            }
+
+            uploader.on('fileQueued', function (file) {
+                fileCount++;
+                fileSize += file.size;
+
+                if (fileCount === 1) {
+                    $placeHolder.addClass('element-invisible');
+                    $statusBar.show();
+                }
+
+                addFile(file);
+            });
+
+            uploader.on('fileDequeued', function (file) {
+                fileCount--;
+                fileSize -= file.size;
+
+                removeFile(file);
+                updateTotalProgress();
+            });
+
+            uploader.on('filesQueued', function (file) {
+                if (!uploader.isInProgress() && (state == 'pedding' || state == 'finish' || state == 'confirm' || state == 'ready')) {
+                    setState('ready');
+                }
+                updateTotalProgress();
+            });
+
+            uploader.on('all', function (type, files) {
+                switch (type) {
+                    case 'uploadFinished':
+                        setState('confirm', files);
+                        break;
+                    case 'startUpload':
+                        /* 添加额外的GET参数 */
+                        var params = utils.serializeParam(editor.queryCommandValue('serverparam')) || '',
+                            url = utils.formatUrl(actionUrl + (actionUrl.indexOf('?') == -1 ? '?':'&') + 'encode=utf-8&' + params);
+                        uploader.option('server', url);
+                        setState('uploading', files);
+                        break;
+                    case 'stopUpload':
+                        setState('paused', files);
+                        break;
+                }
+            });
+
+            uploader.on('uploadBeforeSend', function (file, data, header) {
+                //这里可以通过data对象添加POST参数
+                if (actionUrl.toLowerCase().indexOf('jsp') != -1) {
+                    header['X_Requested_With'] = 'XMLHttpRequest';
+                }
+            });
+
+            uploader.on('uploadProgress', function (file, percentage) {
+                var $li = $('#' + file.id),
+                    $percent = $li.find('.progress span');
+
+                $percent.css('width', percentage * 100 + '%');
+                percentages[ file.id ][ 1 ] = percentage;
+                updateTotalProgress();
+            });
+
+            uploader.on('uploadSuccess', function (file, ret) {
+                var $file = $('#' + file.id);
+                try {
+                    var responseText = (ret._raw || ret),
+                        json = utils.str2json(responseText);
+                    if (json.state == 'SUCCESS') {
+                        uploadVideoList.push({
+                            'url': json.url,
+                            'type': json.type,
+                            'original':json.original
+                        });
+                        $file.append('<span class="success"></span>');
+                    } else {
+                        $file.find('.error').text(json.state).show();
+                    }
+                } catch (e) {
+                    $file.find('.error').text(lang.errorServerUpload).show();
+                }
+            });
+
+            uploader.on('uploadError', function (file, code) {
+            });
+            uploader.on('error', function (code, file) {
+                if (code == 'Q_TYPE_DENIED' || code == 'F_EXCEED_SIZE') {
+                    addFile(file);
+                }
+            });
+            uploader.on('uploadComplete', function (file, ret) {
+            });
+
+            $upload.on('click', function () {
+                if ($(this).hasClass('disabled')) {
+                    return false;
+                }
+
+                if (state === 'ready') {
+                    uploader.upload();
+                } else if (state === 'paused') {
+                    uploader.upload();
+                } else if (state === 'uploading') {
+                    uploader.stop();
+                }
+            });
+
+            $upload.addClass('state-' + state);
+            updateTotalProgress();
+        },
+        getQueueCount: function () {
+            var file, i, status, readyFile = 0, files = this.uploader.getFiles();
+            for (i = 0; file = files[i++]; ) {
+                status = file.getStatus();
+                if (status == 'queued' || status == 'uploading' || status == 'progress') readyFile++;
+            }
+            return readyFile;
+        },
+        refresh: function(){
+            this.uploader.refresh();
+        }
+    };
+
+})();

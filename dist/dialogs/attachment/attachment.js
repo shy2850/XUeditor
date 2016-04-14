@@ -1,1 +1,756 @@
-!function(){function initTabs(){for(var e=$G("tabhead").children,t=0;t<e.length;t++)domUtils.on(e[t],"click",function(e){var t=e.target||e.srcElement;setTabFocus(t.getAttribute("data-content-id"))});setTabFocus("upload")}function setTabFocus(e){if(e){var t,i,a=$G("tabhead").children;for(t=0;t<a.length;t++)i=a[t].getAttribute("data-content-id"),i==e?(domUtils.addClass(a[t],"focus"),domUtils.addClass($G(i),"focus")):(domUtils.removeClasses(a[t],"focus"),domUtils.removeClasses($G(i),"focus"));switch(e){case"upload":uploadFile=uploadFile||new UploadFile("queueList");break;case"online":onlineFile=onlineFile||new OnlineFile("fileList")}}}function initButtons(){dialog.onok=function(){for(var e,t=[],i=$G("tabhead").children,a=0;a<i.length;a++)if(domUtils.hasClass(i[a],"focus")){e=i[a].getAttribute("data-content-id");break}switch(e){case"upload":t=uploadFile.getInsertList();var s=uploadFile.getQueueCount();if(s)return $(".info","#queueList").html('<span style="color:red;">'+"还有2个未上传文件".replace(/[\d]/,s)+"</span>"),!1;break;case"online":t=onlineFile.getInsertList()}editor.execCommand("insertfile",t)}}function UploadFile(e){this.$wrap=e.constructor==String?$("#"+e):$(e),this.init()}function OnlineFile(e){this.container=utils.isString(e)?document.getElementById(e):e,this.init()}var uploadFile,onlineFile;window.onload=function(){initTabs(),initButtons()},UploadFile.prototype={init:function(){this.fileList=[],this.initContainer(),this.initUploader()},initContainer:function(){this.$queue=this.$wrap.find(".filelist")},initUploader:function(){function e(e){var t=r('<li id="'+e.id+'"><p class="title">'+e.name+'</p><p class="imgWrap"></p><p class="progress"><span></span></p></li>'),i=r('<div class="file-panel"><span class="cancel">'+lang.uploadDelete+'</span><span class="rotateRight">'+lang.uploadTurnRight+'</span><span class="rotateLeft">'+lang.uploadTurnLeft+"</span></div>").appendTo(t),a=t.find("p.progress span"),s=t.find("p.imgWrap"),l=r('<p class="error"></p>').hide().appendTo(t),o=function(e){switch(e){case"exceed_size":text=lang.errorExceedSize;break;case"interrupt":text=lang.errorInterrupt;break;case"http":text=lang.errorHttp;break;case"not_allow_type":text=lang.errorFileType;break;default:text=lang.errorUploadRetry}l.text(text).show()};"invalid"===e.getStatus()?o(e.statusText):(s.text(lang.uploadPreview),-1=="|png|jpg|jpeg|bmp|gif|".indexOf("|"+e.ext.toLowerCase()+"|")?s.empty().addClass("notimage").append('<i class="file-preview file-type-'+e.ext.toLowerCase()+'"></i><span class="file-title" title="'+e.name+'">'+e.name+"</span>"):browser.ie&&browser.version<=7?s.text(lang.uploadNoPreview):n.makeThumb(e,function(e,t){if(e||!t)s.text(lang.uploadNoPreview);else{var i=r('<img src="'+t+'">');s.empty().append(i),i.on("error",function(){s.text(lang.uploadNoPreview)})}},b,x),F[e.id]=[e.size,0],e.rotation=0,e.ext&&-1!=k.indexOf(e.ext.toLowerCase())||(o("not_allow_type"),n.removeFile(e))),e.on("statuschange",function(s,n){"progress"===n?a.hide().width(0):"queued"===n&&(t.off("mouseenter mouseleave"),i.remove()),"error"===s||"invalid"===s?(o(e.statusText),F[e.id][1]=1):"interrupt"===s?o("interrupt"):"queued"===s?F[e.id][1]=0:"progress"===s&&(l.hide(),a.css("display","block")),t.removeClass("state-"+n).addClass("state-"+s)}),t.on("mouseenter",function(){i.stop().animate({height:30})}),t.on("mouseleave",function(){i.stop().animate({height:0})}),i.on("click","span",function(){var t,i=r(this).index();switch(i){case 0:return void n.removeFile(e);case 1:e.rotation+=90;break;case 2:e.rotation-=90}U?(t="rotate("+e.rotation+"deg)",s.css({"-webkit-transform":t,"-mos-transform":t,"-o-transform":t,transform:t})):s.css("filter","progid:DXImageTransform.Microsoft.BasicImage(rotation="+~~(e.rotation/90%4+4)%4+")")}),t.insertBefore(f)}function t(e){var t=r("#"+e.id);delete F[e.id],i(),t.off().find(".file-panel").off().end().remove()}function i(){var e,t=0,i=0,a=g.children();r.each(F,function(e,a){i+=a[0],t+=a[0]*a[1]}),e=i?t/i:0,a.eq(0).text(Math.round(100*e)+"%"),a.eq(1).css("width",Math.round(100*e)+"%"),s()}function a(e,t){if(e!=w){var i=n.getStats();switch(c.removeClass("state-"+w),c.addClass("state-"+e),e){case"pedding":d.addClass("element-invisible"),u.addClass("element-invisible"),h.removeClass("element-invisible"),g.hide(),p.hide(),n.refresh();break;case"ready":h.addClass("element-invisible"),d.removeClass("element-invisible"),u.removeClass("element-invisible"),g.hide(),p.show(),c.text(lang.uploadStart),n.refresh();break;case"uploading":g.show(),p.hide(),c.text(lang.uploadPause);break;case"paused":g.show(),p.hide(),c.text(lang.uploadContinue);break;case"confirm":if(g.show(),p.hide(),c.text(lang.uploadStart),i=n.getStats(),i.successNum&&!i.uploadFailNum)return void a("finish");break;case"finish":g.hide(),p.show(),i.uploadFailNum?c.text(lang.uploadRetry):c.text(lang.uploadStart)}w=e,s()}l.getQueueCount()?c.removeClass("disabled"):c.addClass("disabled")}function s(){var e,t="";"ready"===w?t=lang.updateStatusReady.replace("_",m).replace("_KB",WebUploader.formatSize(v)):"confirm"===w?(e=n.getStats(),e.uploadFailNum&&(t=lang.updateStatusConfirm.replace("_",e.successNum).replace("_",e.successNum))):(e=n.getStats(),t=lang.updateStatusFinish.replace("_",m).replace("_KB",WebUploader.formatSize(v)).replace("_",e.successNum),e.uploadFailNum&&(t+=lang.updateStatusError.replace("_",e.uploadFailNum))),p.html(t)}var n,l=this,r=jQuery,o=l.$wrap,d=o.find(".filelist"),u=o.find(".statusBar"),p=u.find(".info"),c=o.find(".uploadBtn"),f=(o.find(".filePickerBtn"),o.find(".filePickerBlock")),h=o.find(".placeholder"),g=u.find(".progress").hide(),m=0,v=0,C=window.devicePixelRatio||1,b=113*C,x=113*C,w="",F={},U=function(){var e=document.createElement("p").style,t="transition"in e||"WebkitTransition"in e||"MozTransition"in e||"msTransition"in e||"OTransition"in e;return e=null,t}(),S=editor.getActionUrl(editor.getOpt("fileActionName")),y=editor.getOpt("fileMaxSize"),k=(editor.getOpt("fileAllowFiles")||[]).join("").replace(/\./g,",").replace(/^[,]/,"");return WebUploader.Uploader.support()?editor.getOpt("fileActionName")?(n=l.uploader=WebUploader.create({pick:{id:"#filePickerReady",label:lang.uploadSelectFile},swf:"../../third-party/webuploader/Uploader.swf",server:S,fileVal:editor.getOpt("fileFieldName"),duplicate:!0,fileSingleSizeLimit:y,compress:!1}),n.addButton({id:"#filePickerBlock"}),n.addButton({id:"#filePickerBtn",label:lang.uploadAddFile}),a("pedding"),n.on("fileQueued",function(t){m++,v+=t.size,1===m&&(h.addClass("element-invisible"),u.show()),e(t)}),n.on("fileDequeued",function(e){m--,v-=e.size,t(e),i()}),n.on("filesQueued",function(e){n.isInProgress()||"pedding"!=w&&"finish"!=w&&"confirm"!=w&&"ready"!=w||a("ready"),i()}),n.on("all",function(e,t){switch(e){case"uploadFinished":a("confirm",t);break;case"startUpload":var i=utils.serializeParam(editor.queryCommandValue("serverparam"))||"",s=utils.formatUrl(S+(-1==S.indexOf("?")?"?":"&")+"encode=utf-8&"+i);n.option("server",s),a("uploading",t);break;case"stopUpload":a("paused",t)}}),n.on("uploadBeforeSend",function(e,t,i){-1!=S.toLowerCase().indexOf("jsp")&&(i.X_Requested_With="XMLHttpRequest")}),n.on("uploadProgress",function(e,t){var a=r("#"+e.id),s=a.find(".progress span");s.css("width",100*t+"%"),F[e.id][1]=t,i()}),n.on("uploadSuccess",function(e,t){var i=r("#"+e.id);try{var a=t._raw||t,s=utils.str2json(a);"SUCCESS"==s.state?(l.fileList.push(s),i.append('<span class="success"></span>')):i.find(".error").text(s.state).show()}catch(n){i.find(".error").text(lang.errorServerUpload).show()}}),n.on("uploadError",function(e,t){}),n.on("error",function(t,i){"Q_TYPE_DENIED"!=t&&"F_EXCEED_SIZE"!=t||e(i)}),n.on("uploadComplete",function(e,t){}),c.on("click",function(){return r(this).hasClass("disabled")?!1:void("ready"===w?n.upload():"paused"===w?n.upload():"uploading"===w&&n.stop())}),c.addClass("state-"+w),void i()):void r("#filePickerReady").after(r("<div>").html(lang.errorLoadConfig)).hide():void r("#filePickerReady").after(r("<div>").html(lang.errorNotSupport)).hide()},getQueueCount:function(){var e,t,i,a=0,s=this.uploader.getFiles();for(t=0;e=s[t++];)i=e.getStatus(),"queued"!=i&&"uploading"!=i&&"progress"!=i||a++;return a},getInsertList:function(){var e,t,i,a=[],s=editor.getOpt("fileUrlPrefix");for(e=0;e<this.fileList.length;e++)i=this.fileList[e],t=i.url,a.push({title:i.original||t.substr(t.lastIndexOf("/")+1),url:s+t});return a}},OnlineFile.prototype={init:function(){this.initContainer(),this.initEvents(),this.initData()},initContainer:function(){this.container.innerHTML="",this.list=document.createElement("ul"),this.clearFloat=document.createElement("li"),domUtils.addClass(this.list,"list"),domUtils.addClass(this.clearFloat,"clearFloat"),this.list.appendChild(this.clearFloat),this.container.appendChild(this.list)},initEvents:function(){var e=this;domUtils.on($G("fileList"),"scroll",function(t){var i=this;i.scrollHeight-(i.offsetHeight+i.scrollTop)<10&&e.getFileData()}),domUtils.on(this.list,"click",function(e){var t=e.target||e.srcElement,i=t.parentNode;"li"==i.tagName.toLowerCase()&&(domUtils.hasClass(i,"selected")?domUtils.removeClasses(i,"selected"):domUtils.addClass(i,"selected"))})},initData:function(){this.state=0,this.listSize=editor.getOpt("fileManagerListSize"),this.listIndex=0,this.listEnd=!1,this.getFileData()},getFileData:function(){var _this=this;_this.listEnd||this.isLoadingData||(this.isLoadingData=!0,ajax.request(editor.getActionUrl(editor.getOpt("fileManagerActionName")),{timeout:1e5,data:utils.extend({start:this.listIndex,size:this.listSize},editor.queryCommandValue("serverparam")),method:"get",onsuccess:function(r){try{var json=eval("("+r.responseText+")");"SUCCESS"==json.state&&(_this.pushData(json.list),_this.listIndex=parseInt(json.start)+parseInt(json.list.length),_this.listIndex>=json.total&&(_this.listEnd=!0),_this.isLoadingData=!1)}catch(e){if(-1!=r.responseText.indexOf("ue_separate_ue")){var list=r.responseText.split(r.responseText);_this.pushData(list),_this.listIndex=parseInt(list.length),_this.listEnd=!0,_this.isLoadingData=!1}}},onerror:function(){_this.isLoadingData=!1}}))},pushData:function(e){var t,i,a,s,n,l=this,r=editor.getOpt("fileManagerUrlPrefix");for(t=0;t<e.length;t++)if(e[t]&&e[t].url){if(i=document.createElement("li"),n=document.createElement("span"),a=e[t].url.substr(e[t].url.lastIndexOf(".")+1),-1!="png|jpg|jpeg|gif|bmp".indexOf(a))s=document.createElement("img"),domUtils.on(s,"load",function(e){return function(){l.scale(e,e.parentNode.offsetWidth,e.parentNode.offsetHeight)}}(s)),s.width=113,s.setAttribute("src",r+e[t].url+(-1==e[t].url.indexOf("?")?"?noCache=":"&noCache=")+(+new Date).toString(36));else{var o=document.createElement("i"),d=document.createElement("span");d.innerHTML=e[t].url.substr(e[t].url.lastIndexOf("/")+1),s=document.createElement("div"),s.appendChild(o),s.appendChild(d),domUtils.addClass(s,"file-wrapper"),domUtils.addClass(d,"file-title"),domUtils.addClass(o,"file-type-"+a),domUtils.addClass(o,"file-preview")}domUtils.addClass(n,"icon"),i.setAttribute("data-url",r+e[t].url),e[t].original&&i.setAttribute("data-title",e[t].original),i.appendChild(s),i.appendChild(n),this.list.insertBefore(i,this.clearFloat)}},scale:function(e,t,i,a){var s=e.width,n=e.height;"justify"==a?s>=n?(e.width=t,e.height=i*n/s,e.style.marginLeft="-"+parseInt((e.width-t)/2)+"px"):(e.width=t*s/n,e.height=i,e.style.marginTop="-"+parseInt((e.height-i)/2)+"px"):s>=n?(e.width=t*s/n,e.height=i,e.style.marginLeft="-"+parseInt((e.width-t)/2)+"px"):(e.width=t,e.height=i*n/s,e.style.marginTop="-"+parseInt((e.height-i)/2)+"px")},getInsertList:function(){var e,t=this.list.children,i=[];for(e=0;e<t.length;e++)if(domUtils.hasClass(t[e],"selected")){var a=t[e].getAttribute("data-url"),s=t[e].getAttribute("data-title")||a.substr(a.lastIndexOf("/")+1);i.push({title:s,url:a})}return i}}}();
+/**
+ * User: Jinqn
+ * Date: 14-04-08
+ * Time: 下午16:34
+ * 上传图片对话框逻辑代码,包括tab: 远程图片/上传图片/在线图片/搜索图片
+ */
+
+(function () {
+
+    var uploadFile,
+        onlineFile;
+
+    window.onload = function () {
+        initTabs();
+        initButtons();
+    };
+
+    /* 初始化tab标签 */
+    function initTabs() {
+        var tabs = $G('tabhead').children;
+        for (var i = 0; i < tabs.length; i++) {
+            domUtils.on(tabs[i], "click", function (e) {
+                var target = e.target || e.srcElement;
+                setTabFocus(target.getAttribute('data-content-id'));
+            });
+        }
+
+        setTabFocus('upload');
+    }
+
+    /* 初始化tabbody */
+    function setTabFocus(id) {
+        if(!id) return;
+        var i, bodyId, tabs = $G('tabhead').children;
+        for (i = 0; i < tabs.length; i++) {
+            bodyId = tabs[i].getAttribute('data-content-id')
+            if (bodyId == id) {
+                domUtils.addClass(tabs[i], 'focus');
+                domUtils.addClass($G(bodyId), 'focus');
+            } else {
+                domUtils.removeClasses(tabs[i], 'focus');
+                domUtils.removeClasses($G(bodyId), 'focus');
+            }
+        }
+        switch (id) {
+            case 'upload':
+                uploadFile = uploadFile || new UploadFile('queueList');
+                break;
+            case 'online':
+                onlineFile = onlineFile || new OnlineFile('fileList');
+                break;
+        }
+    }
+
+    /* 初始化onok事件 */
+    function initButtons() {
+
+        dialog.onok = function () {
+            var list = [], id, tabs = $G('tabhead').children;
+            for (var i = 0; i < tabs.length; i++) {
+                if (domUtils.hasClass(tabs[i], 'focus')) {
+                    id = tabs[i].getAttribute('data-content-id');
+                    break;
+                }
+            }
+
+            switch (id) {
+                case 'upload':
+                    list = uploadFile.getInsertList();
+                    var count = uploadFile.getQueueCount();
+                    if (count) {
+                        $('.info', '#queueList').html('<span style="color:red;">' + '还有2个未上传文件'.replace(/[\d]/, count) + '</span>');
+                        return false;
+                    }
+                    break;
+                case 'online':
+                    list = onlineFile.getInsertList();
+                    break;
+            }
+
+            editor.execCommand('insertfile', list);
+        };
+    }
+
+
+    /* 上传附件 */
+    function UploadFile(target) {
+        this.$wrap = target.constructor == String ? $('#' + target) : $(target);
+        this.init();
+    }
+    UploadFile.prototype = {
+        init: function () {
+            this.fileList = [];
+            this.initContainer();
+            this.initUploader();
+        },
+        initContainer: function () {
+            this.$queue = this.$wrap.find('.filelist');
+        },
+        /* 初始化容器 */
+        initUploader: function () {
+            var _this = this,
+                $ = jQuery,    // just in case. Make sure it's not an other libaray.
+                $wrap = _this.$wrap,
+            // 图片容器
+                $queue = $wrap.find('.filelist'),
+            // 状态栏，包括进度和控制按钮
+                $statusBar = $wrap.find('.statusBar'),
+            // 文件总体选择信息。
+                $info = $statusBar.find('.info'),
+            // 上传按钮
+                $upload = $wrap.find('.uploadBtn'),
+            // 上传按钮
+                $filePickerBtn = $wrap.find('.filePickerBtn'),
+            // 上传按钮
+                $filePickerBlock = $wrap.find('.filePickerBlock'),
+            // 没选择文件之前的内容。
+                $placeHolder = $wrap.find('.placeholder'),
+            // 总体进度条
+                $progress = $statusBar.find('.progress').hide(),
+            // 添加的文件数量
+                fileCount = 0,
+            // 添加的文件总大小
+                fileSize = 0,
+            // 优化retina, 在retina下这个值是2
+                ratio = window.devicePixelRatio || 1,
+            // 缩略图大小
+                thumbnailWidth = 113 * ratio,
+                thumbnailHeight = 113 * ratio,
+            // 可能有pedding, ready, uploading, confirm, done.
+                state = '',
+            // 所有文件的进度信息，key为file id
+                percentages = {},
+                supportTransition = (function () {
+                    var s = document.createElement('p').style,
+                        r = 'transition' in s ||
+                            'WebkitTransition' in s ||
+                            'MozTransition' in s ||
+                            'msTransition' in s ||
+                            'OTransition' in s;
+                    s = null;
+                    return r;
+                })(),
+            // WebUploader实例
+                uploader,
+                actionUrl = editor.getActionUrl(editor.getOpt('fileActionName')),
+                fileMaxSize = editor.getOpt('fileMaxSize'),
+                acceptExtensions = (editor.getOpt('fileAllowFiles') || []).join('').replace(/\./g, ',').replace(/^[,]/, '');;
+
+            if (!WebUploader.Uploader.support()) {
+                $('#filePickerReady').after($('<div>').html(lang.errorNotSupport)).hide();
+                return;
+            } else if (!editor.getOpt('fileActionName')) {
+                $('#filePickerReady').after($('<div>').html(lang.errorLoadConfig)).hide();
+                return;
+            }
+
+            uploader = _this.uploader = WebUploader.create({
+                pick: {
+                    id: '#filePickerReady',
+                    label: lang.uploadSelectFile
+                },
+                swf: '../../third-party/webuploader/Uploader.swf',
+                server: actionUrl,
+                fileVal: editor.getOpt('fileFieldName'),
+                duplicate: true,
+                fileSingleSizeLimit: fileMaxSize,
+                compress: false
+            });
+            uploader.addButton({
+                id: '#filePickerBlock'
+            });
+            uploader.addButton({
+                id: '#filePickerBtn',
+                label: lang.uploadAddFile
+            });
+
+            setState('pedding');
+
+            // 当有文件添加进来时执行，负责view的创建
+            function addFile(file) {
+                var $li = $('<li id="' + file.id + '">' +
+                        '<p class="title">' + file.name + '</p>' +
+                        '<p class="imgWrap"></p>' +
+                        '<p class="progress"><span></span></p>' +
+                        '</li>'),
+
+                    $btns = $('<div class="file-panel">' +
+                        '<span class="cancel">' + lang.uploadDelete + '</span>' +
+                        '<span class="rotateRight">' + lang.uploadTurnRight + '</span>' +
+                        '<span class="rotateLeft">' + lang.uploadTurnLeft + '</span></div>').appendTo($li),
+                    $prgress = $li.find('p.progress span'),
+                    $wrap = $li.find('p.imgWrap'),
+                    $info = $('<p class="error"></p>').hide().appendTo($li),
+
+                    showError = function (code) {
+                        switch (code) {
+                            case 'exceed_size':
+                                text = lang.errorExceedSize;
+                                break;
+                            case 'interrupt':
+                                text = lang.errorInterrupt;
+                                break;
+                            case 'http':
+                                text = lang.errorHttp;
+                                break;
+                            case 'not_allow_type':
+                                text = lang.errorFileType;
+                                break;
+                            default:
+                                text = lang.errorUploadRetry;
+                                break;
+                        }
+                        $info.text(text).show();
+                    };
+
+                if (file.getStatus() === 'invalid') {
+                    showError(file.statusText);
+                } else {
+                    $wrap.text(lang.uploadPreview);
+                    if ('|png|jpg|jpeg|bmp|gif|'.indexOf('|'+file.ext.toLowerCase()+'|') == -1) {
+                        $wrap.empty().addClass('notimage').append('<i class="file-preview file-type-' + file.ext.toLowerCase() + '"></i>' +
+                        '<span class="file-title" title="' + file.name + '">' + file.name + '</span>');
+                    } else {
+                        if (browser.ie && browser.version <= 7) {
+                            $wrap.text(lang.uploadNoPreview);
+                        } else {
+                            uploader.makeThumb(file, function (error, src) {
+                                if (error || !src) {
+                                    $wrap.text(lang.uploadNoPreview);
+                                } else {
+                                    var $img = $('<img src="' + src + '">');
+                                    $wrap.empty().append($img);
+                                    $img.on('error', function () {
+                                        $wrap.text(lang.uploadNoPreview);
+                                    });
+                                }
+                            }, thumbnailWidth, thumbnailHeight);
+                        }
+                    }
+                    percentages[ file.id ] = [ file.size, 0 ];
+                    file.rotation = 0;
+
+                    /* 检查文件格式 */
+                    if (!file.ext || acceptExtensions.indexOf(file.ext.toLowerCase()) == -1) {
+                        showError('not_allow_type');
+                        uploader.removeFile(file);
+                    }
+                }
+
+                file.on('statuschange', function (cur, prev) {
+                    if (prev === 'progress') {
+                        $prgress.hide().width(0);
+                    } else if (prev === 'queued') {
+                        $li.off('mouseenter mouseleave');
+                        $btns.remove();
+                    }
+                    // 成功
+                    if (cur === 'error' || cur === 'invalid') {
+                        showError(file.statusText);
+                        percentages[ file.id ][ 1 ] = 1;
+                    } else if (cur === 'interrupt') {
+                        showError('interrupt');
+                    } else if (cur === 'queued') {
+                        percentages[ file.id ][ 1 ] = 0;
+                    } else if (cur === 'progress') {
+                        $info.hide();
+                        $prgress.css('display', 'block');
+                    } else if (cur === 'complete') {
+                    }
+
+                    $li.removeClass('state-' + prev).addClass('state-' + cur);
+                });
+
+                $li.on('mouseenter', function () {
+                    $btns.stop().animate({height: 30});
+                });
+                $li.on('mouseleave', function () {
+                    $btns.stop().animate({height: 0});
+                });
+
+                $btns.on('click', 'span', function () {
+                    var index = $(this).index(),
+                        deg;
+
+                    switch (index) {
+                        case 0:
+                            uploader.removeFile(file);
+                            return;
+                        case 1:
+                            file.rotation += 90;
+                            break;
+                        case 2:
+                            file.rotation -= 90;
+                            break;
+                    }
+
+                    if (supportTransition) {
+                        deg = 'rotate(' + file.rotation + 'deg)';
+                        $wrap.css({
+                            '-webkit-transform': deg,
+                            '-mos-transform': deg,
+                            '-o-transform': deg,
+                            'transform': deg
+                        });
+                    } else {
+                        $wrap.css('filter', 'progid:DXImageTransform.Microsoft.BasicImage(rotation=' + (~~((file.rotation / 90) % 4 + 4) % 4) + ')');
+                    }
+
+                });
+
+                $li.insertBefore($filePickerBlock);
+            }
+
+            // 负责view的销毁
+            function removeFile(file) {
+                var $li = $('#' + file.id);
+                delete percentages[ file.id ];
+                updateTotalProgress();
+                $li.off().find('.file-panel').off().end().remove();
+            }
+
+            function updateTotalProgress() {
+                var loaded = 0,
+                    total = 0,
+                    spans = $progress.children(),
+                    percent;
+
+                $.each(percentages, function (k, v) {
+                    total += v[ 0 ];
+                    loaded += v[ 0 ] * v[ 1 ];
+                });
+
+                percent = total ? loaded / total : 0;
+
+                spans.eq(0).text(Math.round(percent * 100) + '%');
+                spans.eq(1).css('width', Math.round(percent * 100) + '%');
+                updateStatus();
+            }
+
+            function setState(val, files) {
+
+                if (val != state) {
+
+                    var stats = uploader.getStats();
+
+                    $upload.removeClass('state-' + state);
+                    $upload.addClass('state-' + val);
+
+                    switch (val) {
+
+                        /* 未选择文件 */
+                        case 'pedding':
+                            $queue.addClass('element-invisible');
+                            $statusBar.addClass('element-invisible');
+                            $placeHolder.removeClass('element-invisible');
+                            $progress.hide(); $info.hide();
+                            uploader.refresh();
+                            break;
+
+                        /* 可以开始上传 */
+                        case 'ready':
+                            $placeHolder.addClass('element-invisible');
+                            $queue.removeClass('element-invisible');
+                            $statusBar.removeClass('element-invisible');
+                            $progress.hide(); $info.show();
+                            $upload.text(lang.uploadStart);
+                            uploader.refresh();
+                            break;
+
+                        /* 上传中 */
+                        case 'uploading':
+                            $progress.show(); $info.hide();
+                            $upload.text(lang.uploadPause);
+                            break;
+
+                        /* 暂停上传 */
+                        case 'paused':
+                            $progress.show(); $info.hide();
+                            $upload.text(lang.uploadContinue);
+                            break;
+
+                        case 'confirm':
+                            $progress.show(); $info.hide();
+                            $upload.text(lang.uploadStart);
+
+                            stats = uploader.getStats();
+                            if (stats.successNum && !stats.uploadFailNum) {
+                                setState('finish');
+                                return;
+                            }
+                            break;
+
+                        case 'finish':
+                            $progress.hide(); $info.show();
+                            if (stats.uploadFailNum) {
+                                $upload.text(lang.uploadRetry);
+                            } else {
+                                $upload.text(lang.uploadStart);
+                            }
+                            break;
+                    }
+
+                    state = val;
+                    updateStatus();
+
+                }
+
+                if (!_this.getQueueCount()) {
+                    $upload.addClass('disabled')
+                } else {
+                    $upload.removeClass('disabled')
+                }
+
+            }
+
+            function updateStatus() {
+                var text = '', stats;
+
+                if (state === 'ready') {
+                    text = lang.updateStatusReady.replace('_', fileCount).replace('_KB', WebUploader.formatSize(fileSize));
+                } else if (state === 'confirm') {
+                    stats = uploader.getStats();
+                    if (stats.uploadFailNum) {
+                        text = lang.updateStatusConfirm.replace('_', stats.successNum).replace('_', stats.successNum);
+                    }
+                } else {
+                    stats = uploader.getStats();
+                    text = lang.updateStatusFinish.replace('_', fileCount).
+                        replace('_KB', WebUploader.formatSize(fileSize)).
+                        replace('_', stats.successNum);
+
+                    if (stats.uploadFailNum) {
+                        text += lang.updateStatusError.replace('_', stats.uploadFailNum);
+                    }
+                }
+
+                $info.html(text);
+            }
+
+            uploader.on('fileQueued', function (file) {
+                fileCount++;
+                fileSize += file.size;
+
+                if (fileCount === 1) {
+                    $placeHolder.addClass('element-invisible');
+                    $statusBar.show();
+                }
+
+                addFile(file);
+            });
+
+            uploader.on('fileDequeued', function (file) {
+                fileCount--;
+                fileSize -= file.size;
+
+                removeFile(file);
+                updateTotalProgress();
+            });
+
+            uploader.on('filesQueued', function (file) {
+                if (!uploader.isInProgress() && (state == 'pedding' || state == 'finish' || state == 'confirm' || state == 'ready')) {
+                    setState('ready');
+                }
+                updateTotalProgress();
+            });
+
+            uploader.on('all', function (type, files) {
+                switch (type) {
+                    case 'uploadFinished':
+                        setState('confirm', files);
+                        break;
+                    case 'startUpload':
+                        /* 添加额外的GET参数 */
+                        var params = utils.serializeParam(editor.queryCommandValue('serverparam')) || '',
+                            url = utils.formatUrl(actionUrl + (actionUrl.indexOf('?') == -1 ? '?':'&') + 'encode=utf-8&' + params);
+                        uploader.option('server', url);
+                        setState('uploading', files);
+                        break;
+                    case 'stopUpload':
+                        setState('paused', files);
+                        break;
+                }
+            });
+
+            uploader.on('uploadBeforeSend', function (file, data, header) {
+                //这里可以通过data对象添加POST参数
+                if (actionUrl.toLowerCase().indexOf('jsp') != -1) {
+                    header['X_Requested_With'] = 'XMLHttpRequest';
+                }
+            });
+
+            uploader.on('uploadProgress', function (file, percentage) {
+                var $li = $('#' + file.id),
+                    $percent = $li.find('.progress span');
+
+                $percent.css('width', percentage * 100 + '%');
+                percentages[ file.id ][ 1 ] = percentage;
+                updateTotalProgress();
+            });
+
+            uploader.on('uploadSuccess', function (file, ret) {
+                var $file = $('#' + file.id);
+                try {
+                    var responseText = (ret._raw || ret),
+                        json = utils.str2json(responseText);
+                    if (json.state == 'SUCCESS') {
+                        _this.fileList.push(json);
+                        $file.append('<span class="success"></span>');
+                    } else {
+                        $file.find('.error').text(json.state).show();
+                    }
+                } catch (e) {
+                    $file.find('.error').text(lang.errorServerUpload).show();
+                }
+            });
+
+            uploader.on('uploadError', function (file, code) {
+            });
+            uploader.on('error', function (code, file) {
+                if (code == 'Q_TYPE_DENIED' || code == 'F_EXCEED_SIZE') {
+                    addFile(file);
+                }
+            });
+            uploader.on('uploadComplete', function (file, ret) {
+            });
+
+            $upload.on('click', function () {
+                if ($(this).hasClass('disabled')) {
+                    return false;
+                }
+
+                if (state === 'ready') {
+                    uploader.upload();
+                } else if (state === 'paused') {
+                    uploader.upload();
+                } else if (state === 'uploading') {
+                    uploader.stop();
+                }
+            });
+
+            $upload.addClass('state-' + state);
+            updateTotalProgress();
+        },
+        getQueueCount: function () {
+            var file, i, status, readyFile = 0, files = this.uploader.getFiles();
+            for (i = 0; file = files[i++]; ) {
+                status = file.getStatus();
+                if (status == 'queued' || status == 'uploading' || status == 'progress') readyFile++;
+            }
+            return readyFile;
+        },
+        getInsertList: function () {
+            var i, link, data, list = [],
+                prefix = editor.getOpt('fileUrlPrefix');
+            for (i = 0; i < this.fileList.length; i++) {
+                data = this.fileList[i];
+                link = data.url;
+                list.push({
+                    title: data.original || link.substr(link.lastIndexOf('/') + 1),
+                    url: prefix + link
+                });
+            }
+            return list;
+        }
+    };
+
+
+    /* 在线附件 */
+    function OnlineFile(target) {
+        this.container = utils.isString(target) ? document.getElementById(target) : target;
+        this.init();
+    }
+    OnlineFile.prototype = {
+        init: function () {
+            this.initContainer();
+            this.initEvents();
+            this.initData();
+        },
+        /* 初始化容器 */
+        initContainer: function () {
+            this.container.innerHTML = '';
+            this.list = document.createElement('ul');
+            this.clearFloat = document.createElement('li');
+
+            domUtils.addClass(this.list, 'list');
+            domUtils.addClass(this.clearFloat, 'clearFloat');
+
+            this.list.appendChild(this.clearFloat);
+            this.container.appendChild(this.list);
+        },
+        /* 初始化滚动事件,滚动到地步自动拉取数据 */
+        initEvents: function () {
+            var _this = this;
+
+            /* 滚动拉取图片 */
+            domUtils.on($G('fileList'), 'scroll', function(e){
+                var panel = this;
+                if (panel.scrollHeight - (panel.offsetHeight + panel.scrollTop) < 10) {
+                    _this.getFileData();
+                }
+            });
+            /* 选中图片 */
+            domUtils.on(this.list, 'click', function (e) {
+                var target = e.target || e.srcElement,
+                    li = target.parentNode;
+
+                if (li.tagName.toLowerCase() == 'li') {
+                    if (domUtils.hasClass(li, 'selected')) {
+                        domUtils.removeClasses(li, 'selected');
+                    } else {
+                        domUtils.addClass(li, 'selected');
+                    }
+                }
+            });
+        },
+        /* 初始化第一次的数据 */
+        initData: function () {
+
+            /* 拉取数据需要使用的值 */
+            this.state = 0;
+            this.listSize = editor.getOpt('fileManagerListSize');
+            this.listIndex = 0;
+            this.listEnd = false;
+
+            /* 第一次拉取数据 */
+            this.getFileData();
+        },
+        /* 向后台拉取图片列表数据 */
+        getFileData: function () {
+            var _this = this;
+
+            if(!_this.listEnd && !this.isLoadingData) {
+                this.isLoadingData = true;
+                ajax.request(editor.getActionUrl(editor.getOpt('fileManagerActionName')), {
+                    timeout: 100000,
+                    data: utils.extend({
+                            start: this.listIndex,
+                            size: this.listSize
+                        }, editor.queryCommandValue('serverparam')),
+                    method: 'get',
+                    onsuccess: function (r) {
+                        try {
+                            var json = eval('(' + r.responseText + ')');
+                            if (json.state == 'SUCCESS') {
+                                _this.pushData(json.list);
+                                _this.listIndex = parseInt(json.start) + parseInt(json.list.length);
+                                if(_this.listIndex >= json.total) {
+                                    _this.listEnd = true;
+                                }
+                                _this.isLoadingData = false;
+                            }
+                        } catch (e) {
+                            if(r.responseText.indexOf('ue_separate_ue') != -1) {
+                                var list = r.responseText.split(r.responseText);
+                                _this.pushData(list);
+                                _this.listIndex = parseInt(list.length);
+                                _this.listEnd = true;
+                                _this.isLoadingData = false;
+                            }
+                        }
+                    },
+                    onerror: function () {
+                        _this.isLoadingData = false;
+                    }
+                });
+            }
+        },
+        /* 添加图片到列表界面上 */
+        pushData: function (list) {
+            var i, item, img, filetype, preview, icon, _this = this,
+                urlPrefix = editor.getOpt('fileManagerUrlPrefix');
+            for (i = 0; i < list.length; i++) {
+                if(list[i] && list[i].url) {
+                    item = document.createElement('li');
+                    icon = document.createElement('span');
+                    filetype = list[i].url.substr(list[i].url.lastIndexOf('.') + 1);
+
+                    if ( "png|jpg|jpeg|gif|bmp".indexOf(filetype) != -1 ) {
+                        preview = document.createElement('img');
+                        domUtils.on(preview, 'load', (function(image){
+                            return function(){
+                                _this.scale(image, image.parentNode.offsetWidth, image.parentNode.offsetHeight);
+                            };
+                        })(preview));
+                        preview.width = 113;
+                        preview.setAttribute('src', urlPrefix + list[i].url + (list[i].url.indexOf('?') == -1 ? '?noCache=':'&noCache=') + (+new Date()).toString(36) );
+                    } else {
+                        var ic = document.createElement('i'),
+                            textSpan = document.createElement('span');
+                        textSpan.innerHTML = list[i].url.substr(list[i].url.lastIndexOf('/') + 1);
+                        preview = document.createElement('div');
+                        preview.appendChild(ic);
+                        preview.appendChild(textSpan);
+                        domUtils.addClass(preview, 'file-wrapper');
+                        domUtils.addClass(textSpan, 'file-title');
+                        domUtils.addClass(ic, 'file-type-' + filetype);
+                        domUtils.addClass(ic, 'file-preview');
+                    }
+                    domUtils.addClass(icon, 'icon');
+                    item.setAttribute('data-url', urlPrefix + list[i].url);
+                    if (list[i].original) {
+                        item.setAttribute('data-title', list[i].original);
+                    }
+
+                    item.appendChild(preview);
+                    item.appendChild(icon);
+                    this.list.insertBefore(item, this.clearFloat);
+                }
+            }
+        },
+        /* 改变图片大小 */
+        scale: function (img, w, h, type) {
+            var ow = img.width,
+                oh = img.height;
+
+            if (type == 'justify') {
+                if (ow >= oh) {
+                    img.width = w;
+                    img.height = h * oh / ow;
+                    img.style.marginLeft = '-' + parseInt((img.width - w) / 2) + 'px';
+                } else {
+                    img.width = w * ow / oh;
+                    img.height = h;
+                    img.style.marginTop = '-' + parseInt((img.height - h) / 2) + 'px';
+                }
+            } else {
+                if (ow >= oh) {
+                    img.width = w * ow / oh;
+                    img.height = h;
+                    img.style.marginLeft = '-' + parseInt((img.width - w) / 2) + 'px';
+                } else {
+                    img.width = w;
+                    img.height = h * oh / ow;
+                    img.style.marginTop = '-' + parseInt((img.height - h) / 2) + 'px';
+                }
+            }
+        },
+        getInsertList: function () {
+            var i, lis = this.list.children, list = [];
+            for (i = 0; i < lis.length; i++) {
+                if (domUtils.hasClass(lis[i], 'selected')) {
+                    var url = lis[i].getAttribute('data-url');
+                    var title = lis[i].getAttribute('data-title') || url.substr(url.lastIndexOf('/') + 1);
+                    list.push({
+                        title: title,
+                        url: url
+                    });
+                }
+            }
+            return list;
+        }
+    };
+
+
+})();
