@@ -426,11 +426,11 @@
             return buff.join('');
         },
         setFullScreen:function (fullscreen) {
+            this.editor.fireEvent('fullscreenset', fullscreen);
 
             var editor = this.editor,
                 container = editor.container.parentNode.parentNode;
 
-            editor.fireEvent('fullscreenset', fullscreen);
             if (this._fullscreen != fullscreen) {
                 this._fullscreen = fullscreen;
                 this.editor.fireEvent('beforefullscreenchange', fullscreen);
@@ -441,7 +441,9 @@
                     while (container.tagName != "BODY") {
                         var position = baidu.editor.dom.domUtils.getComputedStyle(container, "position");
                         nodeStack.push(position);
-                        container.style.position = "static";
+                        if (!position.match(/\bfixed\b/)) {
+                            container.style.position = "static";
+                        }
                         container = container.parentNode;
                     }
                     this._bakHtmlOverflow = document.documentElement.style.overflow;
