@@ -9,7 +9,7 @@ exports["localhost"] = {
     "buildFilter": function (pathname) {
     	return /^\W*(dialogs|lang|themes|third-party|action|ueditor)\b/.test(pathname);
     },
-    "include": /@import\s*"([^"]+)";/,
+    "include": '@import\\s*"([^"]+)";',
     agent: {
         get: function (pathname) {
             if (pathname.match(/themes\/default\/css/)) {
