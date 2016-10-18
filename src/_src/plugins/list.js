@@ -774,6 +774,10 @@ UE.plugins['list'] = function () {
                 adjustList(list,list.tagName.toLowerCase(),getStyle(list)||domUtils.getComputedStyle(list,'list-style-type'),true)
             }
         }
+        /* 解决列表新增序列不能自动聚焦问题 */
+        if (keyCode === 13) {
+            me.selection.getRange().scrollToView(null, 0);
+        }
     });
     //处理tab键
     me.addListener('tabkeydown',function(){

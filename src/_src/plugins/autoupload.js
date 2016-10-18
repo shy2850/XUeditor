@@ -40,6 +40,7 @@ UE.plugin.register('autoupload', function (){
                     var handler = function(e){
                         var hasImg = false,
                             items;
+                        console.log(e);
                         //获取粘贴板文件列表或者拖放文件列表
                         items = e.type == 'paste' ? getPasteImage(e):getDropImage(e);
                         if(items){

@@ -199,12 +199,18 @@
             this._show();
         },
         getContentHtml: function (){
+            var options = this.editor.options;
             var contentHtml = '';
             if (typeof this.content == 'string') {
                 contentHtml = this.content;
             } else if (this.iframeUrl) {
                 contentHtml = '<span id="'+ this.id +'_contmask" class="dialogcontmask"></span><iframe id="'+ this.id +
-                    '_iframe" class="%%-iframe" height="100%" width="100%" frameborder="0" src="'+ this.iframeUrl +'"></iframe>';
+                    (options.iframeLocal
+                    ?
+                        ('_iframe" class="%%-iframe dialog-iframe" height="100%" width="100%" frameborder="0" src="about:blank" _src="'+ this.iframeUrl +'"></iframe>')
+                    :
+                        ('_iframe" class="%%-iframe" height="100%" width="100%" frameborder="0" src="'+ this.iframeUrl +'"></iframe>')
+                    );
             }
             return contentHtml;
         },
@@ -379,7 +385,18 @@
             this.showAtCenter();
             if (this.iframeUrl) {
                 try {
-                    this.getDom('iframe').focus();
+                    var frame = this.getDom('iframe');
+                    var doc = frame.contentDocument;
+                    var url = frame.getAttribute('_src');
+                    if (url) {
+                        var spt = url.split(/\b(?=dialogs\/)/);
+                        var html = iframeUrlDocMap[spt[1]];
+                        (html = html.replace('<head>', '<head>'
+                            + '<base href="' + url.replace(/[^\/]+$/, '') + '" />'
+                        ))
+                        doc.write(html);
+                    }
+                    frame.focus();
                 } catch(ex){}
             }
             activeDialog = this;

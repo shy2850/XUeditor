@@ -27,7 +27,7 @@
             return getTableItemsByRange(this).table ? -1 : 0;
         },
         execCommand: function (cmd, opt) {
-            function createTable(opt, tdWidth) {
+            function createTable(opt, tdWidth, tableAttrStr) {
                 var html = [],
                     rowsNum = opt.numRows,
                     colsNum = opt.numCols;
@@ -39,7 +39,8 @@
                     html.push('</tr>')
                 }
                 //禁止指定table-width
-                return '<table><tbody>' + html.join('') + '</tbody></table>'
+                //添加table属性字符串设置
+                return '<table ' + (tableAttrStr || '') + '><tbody>' + html.join('') + '</tbody></table>'
             }
 
             if (!opt) {
@@ -62,7 +63,7 @@
 
             //todo其他属性
             !opt.tdvalign && (opt.tdvalign = me.options.tdvalign);
-            me.execCommand("inserthtml", createTable(opt, tdWidth));
+            me.execCommand("inserthtml", createTable(opt, tdWidth, me.options.tableAttrStr));
         }
     };
 
