@@ -15,9 +15,10 @@ UE.plugins.toggleMenuBox = function () {
             + '.edui-mode-fullscreen .edui-default .edui-toolbar > .edui-box-hide'
             + '{display: -moz-inline-box !important;display: inline-block !important;}',
             document);
-        var buttons = UE.ui.buttons;
-        utils.each(buttons, function (item, key) {
-            if (utils.indexOf(boxes, key) == -1) {
+        var buttons = me.ui.toolbars[0].items;
+        utils.each(buttons, function (item) {
+            var key = item.className.match(/edui-for-(\w+)/) || ['Separator'];
+            if (utils.indexOf(boxes, key[1]) == -1) {
                 var menu = item.getDom();
                 domUtils.addClass(menu, 'edui-box-hide');
             }
