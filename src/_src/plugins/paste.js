@@ -92,6 +92,18 @@ UE.plugins['paste'] = function () {
     function filter(div) {
         var html;
         if (div.firstChild) {
+
+            var imgs = div.querySelectorAll('img');
+            // 处理所有图片，base64的需要上传
+            for (var i = 0; i < imgs.length; i++) {
+                var img = imgs[i];
+                if (img && img.src && !img.src.indexOf('data:image/png;base64,')) {
+                    var file = UE.utils.convertBase64Url(img.src);
+                    UE.utils.sendAndInsertFile(file, me);
+                }
+            }
+
+
             //去掉cut中添加的边界值
             var nodes = domUtils.getElementsByTagName(div, 'span');
             for (var i = 0, ni; ni = nodes[i++];) {
@@ -101,7 +113,6 @@ UE.plugins['paste'] = function () {
             }
 
             if (browser.webkit) {
-
                 var brs = div.querySelectorAll('div br');
                 for (var i = 0, bi; bi = brs[i++];) {
                     var pN = bi.parentNode;
@@ -136,11 +147,6 @@ UE.plugins['paste'] = function () {
                 var dirtyNodes = div.querySelectorAll('[_moz_dirty]');
                 for (i = 0; ci = dirtyNodes[i++];) {
                     ci.removeAttribute('_moz_dirty');
-                }
-                var img = div.querySelector('img');
-                if (img && img.src && !img.src.indexOf('data:image/png;base64,')) {
-                    var file = UE.utils.convertBase64Url(img.src);
-                    UE.utils.sendAndInsertFile(file, me);
                 }
             }
             if (!browser.ie) {

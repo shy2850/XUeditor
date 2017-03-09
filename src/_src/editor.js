@@ -10,6 +10,6 @@ window.UE = baidu.editor = {
     instants:{},
     I18N:{},
     _customizeUI:{},
-    version:'1.5.0'
+    version:'1.6.5'
 };
 var dom = UE.dom = {};

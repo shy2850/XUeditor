@@ -40,7 +40,7 @@
         // 所有 iframe 通过document.write写出，避免iframe跨域
         // , iframeLocal: true
 
-        , imageUrl: URL + "action.js?uploadUrl=uploads/&delay=2000"
+        , imageUrl: URL + "action.js?uploadUrl=uploads/&action=uploadfile&delay=2000"
         // , uploadfile: URL + "action.js?uploadUrl=uploads/"
 
         //工具栏上的所有的功能按钮和下拉框，可以在new编辑器的实例时选择自己需要的重新定义

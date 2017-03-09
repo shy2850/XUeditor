@@ -1,6 +1,6 @@
 {
   "name": "xueditor",
-  "version": "1.6.4",
+  "version": "1.6.5",
   "description": "clone from ueditor 1.5.0",
   "main": "ueditor.js",
   "scripts": {
